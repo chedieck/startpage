@@ -1,6 +1,22 @@
 <script>
   import { sections, title, quote, nuvemURL } from '$lib/config';
-  const time = `${(new Date()).toLocaleDateString()} @${(new Date()).toLocaleTimeString()}`
+  import { onMount } from 'svelte';
+  let time = `${(new Date()).toLocaleDateString()} @${(new Date()).toLocaleTimeString()}`
+
+  let bgLoaded = false;
+
+  onMount(() => {
+    const img = new Image();
+    img.src = '/time-waits-for-no-one.png';
+    img.onload = () => {
+      bgLoaded = true;
+    };
+
+    setInterval(() => {
+  time = `${(new Date()).toLocaleDateString()} @${(new Date()).toLocaleTimeString()}`
+    }, 100)
+  });
+
 </script>
 
 <style>
@@ -11,6 +27,12 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    transition: opacity 0.2s ease;
+    opacity: 0;
+  }
+
+  .wrapper.bg-loaded {
+    opacity: 1;
   }
 
   .window {
@@ -105,6 +127,7 @@
     align-items: flex-start;
     gap: 3rem;
     height: 90%;
+    width: 100%;
   }
 
   .column {
@@ -133,7 +156,7 @@
 </style>
 
 
-<div class="wrapper">
+<div class="wrapper" id="wrapper" class:bg-loaded={bgLoaded}>
   <div class="window">
     <div class="top-container">
       <div class="title">
