@@ -1,11 +1,11 @@
 <script>
-  import { sections, title, quote } from '$lib/config';
+  import { sections, title, quote, nuvemURL } from '$lib/config';
   const time = `${(new Date()).toLocaleDateString()} @${(new Date()).toLocaleTimeString()}`
 </script>
 
 <style>
   .wrapper {
-    background: url('/time-waits-for-no-one.png') center center / cover no-repeat;
+    background: #000 url('/time-waits-for-no-one.png') center center / cover no-repeat;
     width: 100vw;
     height: 100vh;
     display: flex;
@@ -151,7 +151,7 @@
     <div class="main-container">
       <div class="main">
         <div class="nuvem">
-          <a href="https://example.com" rel="noopener noreferrer">☁️ Nuvem Foda</a>
+          <a href={nuvemURL} rel="noopener noreferrer">☁️ Nuvem Foda</a>
         </div>
 
         <div class="lists-container">

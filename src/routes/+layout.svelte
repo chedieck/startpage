@@ -1,5 +1,6 @@
 <svelte:head>
-  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet" />
+  <link rel="preload" as="image" href="/time-waits-for-no-one.png" />
+  <link rel="preload" as="image" href="/window-nakamura.png" />
 </svelte:head>
 
 <slot />
