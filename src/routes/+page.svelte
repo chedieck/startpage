@@ -1,35 +1,5 @@
 <script>
-    const sections = [
-        {
-            title: 'Work',
-            items: [
-              { name: 'Client', url: 'https://example.com/work-repo' },
-              { name: 'Server', url: 'https://example.com/work-repo' },
-              { name: 'Staking', url: 'https://example.com/private-repo' },
-              { name: 'Poker', url: 'https://example.com/private-repo' },
-              { name: 'Poker Software', url: 'https://example.com/private-repo' },
-            ],
-            icon: '💼'
-        },
-        {
-            title: 'Entertainment',
-            items: [
-                { name: 'YouTube', url: 'https://www.youtube.com/feed/subscriptions' },
-            ],
-            icon: '🎮'
-        },
-        {
-            title: 'Study',
-            items: [
-                { name: 'HackTheBox', url: 'https://hackthebox.com' },
-                { name: 'TryHackMe', url: 'https://tryhackme.com' },
-            ],
-            icon: '📚'
-        }
-    ];
-
-  const title = "user's startpage"
-  const quote = 'Act as if what you do makes a difference. It does.'
+  import { sections, title, quote } from '$lib/config';
   const time = `${(new Date()).toLocaleDateString()} @${(new Date()).toLocaleTimeString()}`
 </script>
 
@@ -181,7 +151,7 @@
     <div class="main-container">
       <div class="main">
         <div class="nuvem">
-          <a href="https://my.nuvem.com" rel="noopener noreferrer">Nuvem Foda</a>
+          <a href="https://example.com" rel="noopener noreferrer">☁️ Nuvem Foda</a>
         </div>
 
         <div class="lists-container">

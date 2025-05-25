@@ -4,12 +4,3 @@
 
 <slot />
 
-<style>
-body {
-  margin: 0;
-  background: url('/bg.jpg') no-repeat center center fixed;
-  background-size: cover;
-  font-family: 'VT323', monospace;
-  color: #eee;
-}
-</style>
