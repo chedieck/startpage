@@ -50,6 +50,11 @@
     margin-bottom: 1rem;
   }
 
+  .column h2 {
+    width: 100%;
+    text-align: center;
+  }
+
   ul {
     list-style: none;
     padding: 0;
@@ -111,6 +116,7 @@
   }
   .main {
     padding-top: 1.5rem;
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -180,7 +186,7 @@
         <div class="lists-container">
           {#each sections as section}
             <div class="column">
-              <h2>{section.icon} {section.title}</h2>
+              <h2>{section.icon}</h2><h2>{section.title}</h2>
               <ul>
                 {#each section.items as item}
                   <li>
