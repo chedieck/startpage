@@ -27,6 +27,10 @@
             icon: '📚'
         }
     ];
+
+  const title = "user's startpage"
+  const quote = 'Act as if what you do makes a difference. It does.'
+  const time = `${(new Date()).toLocaleDateString()} @${(new Date()).toLocaleTimeString()}`
 </script>
 
 <style>
@@ -72,40 +76,46 @@
     text-decoration: underline;
   }
 
-  .top-pad {
+  .top-container {
+    box-sizing: border-box;
+    padding-top: 0.7rem;
+    padding-left: 1.5rem;
+    padding-right: 1.7rem;
+    display: flex;
+    justify-content: space-between;
     width: 100%;
-    height: 3.5rem;
-    margin-top: 0px;
+    height: 3.2rem;
   }
-  .title-text-container {
+  .top-container .title {
+    font-weight: bold;
+    font-size: 1.3rem;
+  }
+  .top-container .time {
+    font-weight: bold;
+    font-size: 1.3rem;
+  }
+  .quote-text-container {
+    box-sizing: border-box;
+    padding-left: 21.8rem;
     width: 100%;
     height: 2.0rem;
-    margin-top: 0px;
     display: flex;
     flex-direction: row;
   }
-  .title-text-left-pad {
-    width: 21.5rem;
-    height: 2.0rem;
-  }
-  .title-text {
-    padding-top: 0.1rem;
+  .quote-text {
+    padding-top: 0.4rem;
     padding-left: 0.4rem;
-    color: black;
-    font-size: 1.5rem;
+    color: #222;
+    font-style: italic;
+    font-size: 1.2rem;
   }
   .main-container {
+    box-sizing: border-box;
     display: flex;
+    padding-left: 21rem;
     flex-direction: row;
     height: 100%;
     width: 100%;
-  }
-  .main-container-left-pad {
-    height: 100%;
-    width: 23rem;
-    margin-top: 0px;
-    display: flex;
-    flex-direction: row;
   }
   .main {
     padding-top: 1.5rem;
@@ -132,28 +142,21 @@
   }
 
   /*
-  .main-container-left-pad {
-    background: red;
-    opacity: 70%;
-  }
   .main-container {
     background: grey;
     opacity: 70%;
   }
-  .title-text-left-pad {
-    background: blue;
-    opacity: 70%;
-  }
-  .title-text-container {
+  .quote-text-container {
     background: yellow;
     opacity: 70%;
   }
-  .top-pad {
+  .top-container {
     background: green;
     opacity: 70%;
     }
   .main {
-    color:  purple;
+    background: purple;
+    opacity: 70%;
   }
     /* debug */
 
@@ -162,15 +165,20 @@
 
 <div class="wrapper">
   <div class="window">
-    <div class="top-pad"></div>
-    <div class="title-text-container">
-      <div class="title-text-left-pad"></div>
-      <div class="title-text">
-        <span> bla</span>
+    <div class="top-container">
+      <div class="title">
+        <span>{title}</span>
+      </div>
+      <div class="time">
+        <span>{time}</span>
+      </div>
+    </div>
+    <div class="quote-text-container">
+      <div class="quote-text">
+        <span>{quote}</span>
       </div>
     </div>
     <div class="main-container">
-      <div class="main-container-left-pad"></div>
       <div class="main">
         <div class="nuvem">
           <a href="https://my.nuvem.com" rel="noopener noreferrer">Nuvem Foda</a>
