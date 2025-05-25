@@ -1,0 +1,12 @@
+[Unit]
+Description=Startpage Dev Server
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/user/codes/startpage
+ExecStart=/usr/bin/yarn dev --port 51991
+Restart=on-failure
+
+[Install]
+WantedBy=default.target
