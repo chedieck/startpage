@@ -101,13 +101,13 @@
 
   .top-container {
     box-sizing: border-box;
-    padding-top: 0.7rem;
+    padding-top: 0.9rem;
     padding-left: 1.5rem;
     padding-right: 1.7rem;
     display: flex;
     justify-content: space-between;
     width: 100%;
-    height: 3.2rem;
+    height: 3.4rem;
   }
   .top-container .title {
     font-weight: bold;
@@ -117,11 +117,11 @@
     font-weight: bold;
     font-size: 1.3rem;
   }
-  .quote-text-container {
+  .quote-container {
     box-sizing: border-box;
     padding-left: 21.8rem;
     width: 100%;
-    height: 2.0rem;
+    height: 2.7rem;
     display: flex;
     flex-direction: row;
   }
@@ -135,7 +135,9 @@
   .main-container {
     box-sizing: border-box;
     display: flex;
-    padding-left: 21rem;
+    padding-left: 21.5rem;
+    padding-right: 1.2rem;
+    padding-bottom: 0.8rem;
     flex-direction: row;
     height: 100%;
     width: 100%;
@@ -155,15 +157,14 @@
   .lists-container {
     background-size: contain;
     display: flex;
-    justify-content: center;
+    justify-content: space-around;
     align-items: flex-start;
     gap: 3rem;
-    height: 90%;
+    min-height: 80%;
     width: 100%;
   }
 
   .column {
-    padding: 1.5rem;
   }
 
   /*
@@ -171,7 +172,7 @@
     background: grey;
     opacity: 70%;
   }
-  .quote-text-container {
+  .quote-container {
     background: yellow;
     opacity: 70%;
   }
@@ -198,7 +199,7 @@
         <span>{time}</span>
       </div>
     </div>
-    <div class="quote-text-container">
+    <div class="quote-container">
       <div class="quote-text">
         <span>{quote}</span>
       </div>
