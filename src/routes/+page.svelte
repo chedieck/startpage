@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { sections, title, quote, nuvemURL } from '$lib/config';
   import { onMount } from 'svelte';
   let time = `${(new Date()).toLocaleDateString()} @${(new Date()).toLocaleTimeString()}`
@@ -12,9 +12,35 @@
       bgLoaded = true;
     };
 
-    setInterval(() => {
+    const interval = setInterval(() => {
   time = `${(new Date()).toLocaleDateString()} @${(new Date()).toLocaleTimeString()}`
     }, 100)
+
+    
+  const shortcutMap = new Map();
+  sections.forEach(section => {
+    section.items.forEach(item => {
+      if (item.shortcut) {
+        shortcutMap.set(item.shortcut.toLowerCase(), item.url);
+      }
+    });
+  });
+
+  const handleKey = (e: any) => {
+    const key = e.key.toLowerCase();
+    if (shortcutMap.has(key)) {
+      window.location.href = shortcutMap.get(key);
+    }
+  };
+
+  window.addEventListener('keydown', handleKey);
+
+  return () => {
+    window.removeEventListener('keydown', handleKey);
+    clearInterval(interval);
+  };
+
+
   });
 
 </script>
@@ -190,7 +216,7 @@
               <ul>
                 {#each section.items as item}
                   <li>
-                    <a href={item.url} rel="noopener noreferrer">{item.name}</a>
+                    <a href={item.url} rel="noopener noreferrer">({item.shortcut}) {item.name}</a>
                   </li>
                 {/each}
               </ul>
