@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { sections, title, quote, nuvemURL } from '$lib/config';
+  import { sections, title, quote, mainSection } from '$lib/config';
   import { onMount } from 'svelte';
   let time = `${(new Date()).toLocaleDateString()} @${(new Date()).toLocaleTimeString()}`
 
@@ -21,10 +21,11 @@
   sections.forEach(section => {
     section.items.forEach(item => {
       if (item.shortcut) {
-        shortcutMap.set(item.shortcut.toLowerCase(), item.url);
+        shortcutMap.set(item.shortcut, item.url);
       }
     });
   });
+  shortcutMap.set(mainSection.shortcut, mainSection.url);
 
   const handleKey = (e: any) => {
     const key = e.key.toLowerCase();
@@ -207,7 +208,7 @@
     <div class="main-container">
       <div class="main">
         <div class="nuvem">
-          <a href={nuvemURL} rel="noopener noreferrer">☁️ Nuvem Foda</a>
+          <a href={mainSection.url} rel="noopener noreferrer">({mainSection.shortcut}) {mainSection.name}</a>
         </div>
 
         <div class="lists-container">
