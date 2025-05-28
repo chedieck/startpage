@@ -1,5 +1,5 @@
-<script lang="ts">
-  import { sections, title, quote, mainSection } from '$lib/config';
+<script>
+  import { rows, title, quote } from '$lib/config';
   import { onMount } from 'svelte';
   let time = `${(new Date()).toLocaleDateString()} @${(new Date()).toLocaleTimeString()}`
 
@@ -16,18 +16,20 @@
   time = `${(new Date()).toLocaleDateString()} @${(new Date()).toLocaleTimeString()}`
     }, 100)
 
-    
-  const shortcutMap = new Map();
-  sections.forEach(section => {
-    section.items.forEach(item => {
-      if (item.shortcut) {
-        shortcutMap.set(item.shortcut, item.url);
-      }
-    });
-  });
-  shortcutMap.set(mainSection.shortcut, mainSection.url);
 
-  const handleKey = (e: any) => {
+    const shortcutMap = new Map();
+    rows.forEach(row => {
+      row.forEach(section => {
+        section.items.forEach(item => {
+          if (item.shortcut) {
+            shortcutMap.set(item.shortcut, item.url);
+          }
+        });
+      })
+    }
+    );
+
+  const handleKey = (e) => {
     const key = e.key.toLowerCase();
     if (shortcutMap.has(key)) {
       window.location.href = shortcutMap.get(key);
@@ -54,7 +56,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    transition: opacity 0.2s ease;
+    transition: opacity 0.3s ease;
     opacity: 0;
   }
 
@@ -152,20 +154,17 @@
     justify-content: space-between;
   }
 
-  .nuvem {
-    font-size: 2rem;
-  }
   .lists-container {
     background-size: contain;
     display: flex;
     justify-content: space-around;
     align-items: flex-start;
     gap: 3rem;
-    min-height: 80%;
     width: 100%;
   }
 
-  .column {
+  .item {
+    font-size: 1rem;
   }
 
   /*
@@ -207,17 +206,14 @@
     </div>
     <div class="main-container">
       <div class="main">
-        <div class="nuvem">
-          <a href={mainSection.url} rel="noopener noreferrer">({mainSection.shortcut}) {mainSection.name}</a>
-        </div>
-
+      {#each rows as row}
         <div class="lists-container">
-          {#each sections as section}
+          {#each row as section}
             <div class="column">
-              <h2>{section.icon}</h2><h2>{section.title}</h2>
+              <h2>{section.icon} {section.title}</h2>
               <ul>
                 {#each section.items as item}
-                  <li>
+                  <li class="item">
                     <a href={item.url} rel="noopener noreferrer">({item.shortcut}) {item.name}</a>
                   </li>
                 {/each}
@@ -225,6 +221,7 @@
             </div>
           {/each}
         </div>
+      {/each}
       </div>
     </div>
   </div>
