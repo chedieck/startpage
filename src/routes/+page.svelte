@@ -21,7 +21,7 @@
     rows.forEach(row => {
       row.forEach(section => {
         section.items.forEach(item => {
-          if (item.shortcut) {
+          if (item.shortcut && item.shortcut !== "-") {
             shortcutMap.set(item.shortcut, item.url);
           }
         });
