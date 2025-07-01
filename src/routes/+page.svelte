@@ -30,7 +30,7 @@
     );
 
   const handleKey = (e) => {
-    const key = e.key.toLowerCase();
+    const key = e.key;
     if (shortcutMap.has(key)) {
       window.location.href = shortcutMap.get(key);
     }
