@@ -111,6 +111,7 @@
     justify-content: space-between;
     width: 100%;
     height: 3.4rem;
+    /*min-height: 3rem;*/
   }
   .top-container .title {
     font-weight: bold;
@@ -124,6 +125,7 @@
     box-sizing: border-box;
     padding-left: 21.8rem;
     width: 100%;
+    /*min-height: 2.3rem;*/
     height: 2.7rem;
     display: flex;
     flex-direction: row;
@@ -146,7 +148,6 @@
     width: 100%;
   }
   .main {
-    padding-top: 1.5rem;
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -184,7 +185,7 @@
     background: purple;
     opacity: 70%;
   }
-    /* debug */
+  /* debug */
 
 </style>
 
