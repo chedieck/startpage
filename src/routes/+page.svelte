@@ -171,7 +171,6 @@
   }
 
   /*
-  /* debug */
   .main-container {
     background: grey;
     opacity: 70%;
@@ -188,6 +187,7 @@
     background: purple;
     opacity: 70%;
   }
+  /* debug */
 
 </style>
 
