@@ -104,13 +104,14 @@
 
   .top-container {
     box-sizing: border-box;
-    padding-top: 0.9rem;
+    padding-top: 0.7rem;
     padding-left: 1.5rem;
     padding-right: 1.7rem;
     display: flex;
     justify-content: space-between;
     width: 100%;
-    height: 3.4rem;
+    height: 2.8rem;
+    min-height: 2.8rem;
     /*min-height: 3rem;*/
   }
   .top-container .title {
@@ -126,7 +127,8 @@
     padding-left: 21.8rem;
     width: 100%;
     /*min-height: 2.3rem;*/
-    height: 2.7rem;
+    min-height: 2.4rem;
+    height: 2.4rem;
     display: flex;
     flex-direction: row;
   }
@@ -169,6 +171,7 @@
   }
 
   /*
+  /* debug */
   .main-container {
     background: grey;
     opacity: 70%;
@@ -185,7 +188,6 @@
     background: purple;
     opacity: 70%;
   }
-  /* debug */
 
 </style>
 
