@@ -65,17 +65,6 @@
 </script>
 
 <style>
-  .tab-title {
-    width: 100%;
-  text-align: center;
-  justify-content: center;
-  color: blue;
-  padding: 0.4rem;
-  text-shadow:
-    -1px 0 0 yellow,  /* left */
-     0 -1px 0 yellow; /* top */
-}
-
   .wrapper {
     background: #000 url('/time-waits-for-no-one.png') center center / cover no-repeat;
     width: 100vw;
@@ -201,6 +190,46 @@
     font-size: 1rem;
   }
 
+  .tab-bar-container {
+    padding-left: 21.8rem;
+    box-sizing: border-box;
+    width: 100%;
+    /*min-height: 2.3rem;*/
+    height: 3rem;
+    display: flex;
+    flex-direction: row;
+  }
+
+  .tab-bar {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    gap: 1.5rem;
+    justify-content: space-around;
+    padding-left: 12%;
+    padding-right: 12%;
+    flex-wrap: wrap;
+  }
+
+  .tab-title.active h1 {
+    font-weight: 600;
+    color: yellow;
+    text-shadow:
+    -1px 0 0 blue,  /* left */
+    0 -1px 0 blue; /* top */
+  }
+
+  .tab-title h1 {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+    color: blue;
+    text-shadow:
+    -1px 0 0 yellow,  /* left */
+    0 -1px 0 yellow; /* top */
+  }
+
+
   /*
   .main-container {
     background: grey;
@@ -251,10 +280,20 @@
         <span>{quote}</span>
       </div>
     </div>
-    <div class="tab-title">
-      <h1>
-        {naming[currentTabIndex].title}
-      </h1>
+    <div class="tab-bar-container">
+      <div class="tab-bar">
+        {#each Object.values(naming) as tab, i (i)}
+          <div
+            class="tab-title"
+            class:active={i === currentTabIndex}
+            on:click={() => currentTabIndex = i}
+          >
+            <h1>
+              {tab.title}
+            </h1>
+          </div>
+        {/each}
+      </div>
     </div>
     <div class="main-container">
       <div class="main">
