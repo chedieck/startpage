@@ -1,9 +1,28 @@
 <script>
-  import { rows, title, quote } from '$lib/config';
+  import { tabs, naming, title, quote } from '$lib/config';
   import { onMount } from 'svelte';
   let time = `${(new Date()).toLocaleDateString()} @${(new Date()).toLocaleTimeString()}`
 
   let bgLoaded = false;
+
+  let currentTabIndex = 0;
+  $: currentRows = tabs[currentTabIndex];
+
+  function buildShortcutMap(rows) {
+    const shortcutMap = new Map();
+    rows.forEach(row => {
+      row.forEach(section => {
+        section.items.forEach(item => {
+          if (item.shortcut && item.shortcut !== "-") {
+            shortcutMap.set(item.shortcut, item.url);
+          }
+        });
+      });
+    });
+    return shortcutMap;
+  }
+
+  $: shortcutMap = buildShortcutMap(currentRows);
 
   onMount(() => {
     const img = new Image();
@@ -13,42 +32,50 @@
     };
 
     const interval = setInterval(() => {
-  time = `${(new Date()).toLocaleDateString()} @${(new Date()).toLocaleTimeString()}`
+      time = `${(new Date()).toLocaleDateString()} @${(new Date()).toLocaleTimeString()}`
     }, 100)
 
+    const handleKey = (e) => {
+      const key = e.key;
 
-    const shortcutMap = new Map();
-    rows.forEach(row => {
-      row.forEach(section => {
-        section.items.forEach(item => {
-          if (item.shortcut && item.shortcut !== "-") {
-            shortcutMap.set(item.shortcut, item.url);
-          }
-        });
-      })
-    }
-    );
+      // Tab navigation
+      if (key === 't') {
+        currentTabIndex = (currentTabIndex + 1) % tabs.length;
+        return;
+      }
+      if (key === 'T') {
+        currentTabIndex = (currentTabIndex - 1 + tabs.length) % tabs.length;
+        return;
+      }
 
-  const handleKey = (e) => {
-    const key = e.key;
-    if (shortcutMap.has(key)) {
-      window.location.href = shortcutMap.get(key);
-    }
-  };
+      // Shortcut navigation
+      if (shortcutMap.has(key)) {
+        window.location.href = shortcutMap.get(key);
+      }
+    };
 
-  window.addEventListener('keydown', handleKey);
+    window.addEventListener('keydown', handleKey);
 
-  return () => {
-    window.removeEventListener('keydown', handleKey);
-    clearInterval(interval);
-  };
-
-
+    return () => {
+      window.removeEventListener('keydown', handleKey);
+      clearInterval(interval);
+    };
   });
 
 </script>
 
 <style>
+  .tab-title {
+    width: 100%;
+  text-align: center;
+  justify-content: center;
+  color: blue;
+  padding: 0.4rem;
+  text-shadow:
+    -1px 0 0 yellow,  /* left */
+     0 -1px 0 yellow; /* top */
+}
+
   .wrapper {
     background: #000 url('/time-waits-for-no-one.png') center center / cover no-repeat;
     width: 100vw;
@@ -153,17 +180,21 @@
     width: 100%;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: start;
     justify-content: space-between;
+    padding: 1rem;
   }
 
   .lists-container {
     background-size: contain;
     display: flex;
-    justify-content: space-around;
+    justify-content: start;
     align-items: flex-start;
     gap: 3rem;
     width: 100%;
+  }
+  .lists-container .column  {
+    width: 50%;
   }
 
   .item {
@@ -183,6 +214,19 @@
     background: green;
     opacity: 70%;
     }
+  .tab-title {
+    background: magenta;
+    opacity: 70%;
+  }
+  .column {
+    background: yellow;
+    border: solid 1px black;
+  }
+  .lists-container {
+    background: cyan;
+    border: solid 1px black;
+    opacity: 70%;
+  }
   .main {
     background: purple;
     opacity: 70%;
@@ -207,9 +251,14 @@
         <span>{quote}</span>
       </div>
     </div>
+    <div class="tab-title">
+      <h1>
+        {naming[currentTabIndex].title}
+      </h1>
+    </div>
     <div class="main-container">
       <div class="main">
-      {#each rows as row}
+      {#each currentRows as row}
         <div class="lists-container">
           {#each row as section}
             <div class="column">
