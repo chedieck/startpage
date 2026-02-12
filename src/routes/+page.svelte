@@ -26,7 +26,7 @@
 
   onMount(() => {
     const img = new Image();
-    img.src = '/time-waits-for-no-one.png';
+    img.src = '/background.png';
     img.onload = () => {
       bgLoaded = true;
     };
@@ -66,37 +66,166 @@
 
 <style>
   .wrapper {
-    background: #000 url('/time-waits-for-no-one.png') center center / cover no-repeat;
+    background: #000 url('/background.png') center / cover no-repeat;
     width: 100vw;
     height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: opacity 0.3s ease;
-    opacity: 0;
+    display: grid;
+    place-items: center;
   }
 
   .wrapper.bg-loaded {
     opacity: 1;
   }
 
-  .window {
-    background: url('/window-nakamura.png') center center / cover no-repeat;
-    justify-content: flex-start;
-    width: 1000px;
-    height: 610px;
+  /* === Scene container (scales everything together) === */
+
+  .scene {
+    position: relative;
+    width: min(1000px, 95vw, calc(95vh * 1000 / 610));
+    aspect-ratio: 1000 / 610;
+
+  font-size: clamp(8px, 1.35vmin, 18px);
+  }
+
+
+  .frame {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* === Overlay layers === */
+
+  .window-content,
+  .top-container,
+  .quote-container,
+  .tab-bar-container,
+  .main-container {
+    position: absolute;
+    z-index: 2;
+    box-sizing: border-box;
+  }
+
+  /* Left window image */
+
+  .window-content {
+    left: 2.1%;
+    top: 8.8%;
+    width: 31.5%;
+    height: 88.5%;
+    background: url('/window-content.png') center / cover no-repeat;
+  }
+
+  /* === Top bar === */
+
+  .top-container {
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 8.5%;
+    padding: 1.2% 2%;
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
     align-items: center;
   }
 
-  h2 {
-    font-size: 2rem;
-    margin-bottom: 1rem;
+  .top-container .title,
+  .top-container .time {
+    font-weight: bold;
+    font-size: 1.3em;
   }
 
-  .column h2 {
+  /* === Quote row === */
+
+  .quote-container {
+    left: 34.2%;
+    top: 8.4%;
+    width: 64.5%;
+    height: 5.5%;
+    display: flex;
+    align-items: center;
+    padding-left: 1%;
+  }
+
+  .quote-text {
+    color: #222;
+    font-style: italic;
+    font-size: 1.2em;
+  }
+
+  /* === Tabs === */
+
+  .tab-bar-container {
+    left: 28.8%;
+    top: 15.5%;
+    width: 73.5%;
+    height: 9%;
+    display: flex;
+    align-items: center;
+  }
+
+  .tab-bar {
     width: 100%;
+    display: flex;
+    gap: 1.5rem;
+    justify-content: space-around;
+    flex-wrap: wrap;
+  }
+
+  .tab-title.active h1 {
+    font-weight: 600;
+    color: yellow;
+    text-shadow:
+      -1px 0 0 blue,
+      0 -1px 0 blue;
+  }
+
+  .tab-title h1 {
+    text-align: center;
+    color: blue;
+    text-shadow:
+      -1px 0 0 yellow,
+      0 -1px 0 yellow;
+  }
+
+  /* === Main content === */
+
+  .main-container {
+    left: 34.8%;
+    top: 24.5%;
+    width: 62.5%;
+    height: 72%;
+    padding: 1%;
+    display: flex;
+  }
+
+  .main {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .lists-container {
+    display: flex;
+    gap: 3rem;
+    width: 100%;
+    height: 50%;
+  }
+
+  .column {
+    width: 50%;
+  }
+
+  /* === Typography === */
+
+  h2 {
+    font-size: 2em;
+    margin-bottom: 1rem;
     text-align: center;
   }
 
@@ -118,147 +247,44 @@
     text-decoration: underline;
   }
 
-  .top-container {
-    box-sizing: border-box;
-    padding-top: 0.7rem;
-    padding-left: 1.5rem;
-    padding-right: 1.7rem;
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    height: 2.8rem;
-    min-height: 2.8rem;
-    /*min-height: 3rem;*/
-  }
-  .top-container .title {
-    font-weight: bold;
-    font-size: 1.3rem;
-  }
-  .top-container .time {
-    font-weight: bold;
-    font-size: 1.3rem;
-  }
-  .quote-container {
-    box-sizing: border-box;
-    padding-left: 21.8rem;
-    width: 100%;
-    /*min-height: 2.3rem;*/
-    min-height: 2.4rem;
-    height: 2.4rem;
-    display: flex;
-    flex-direction: row;
-  }
-  .quote-text {
-    padding-top: 0.4rem;
-    padding-left: 0.4rem;
-    color: #222;
-    font-style: italic;
-    font-size: 1.2rem;
-  }
-  .main-container {
-    box-sizing: border-box;
-    display: flex;
-    padding-left: 21.5rem;
-    padding-right: 1.2rem;
-    padding-bottom: 0.8rem;
-    flex-direction: row;
-    height: 100%;
-    width: 100%;
-  }
-  .main {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: start;
-    justify-content: space-between;
-    padding: 1rem;
-  }
-
-  .lists-container {
-    background-size: contain;
-    display: flex;
-    justify-content: start;
-    align-items: flex-start;
-    gap: 3rem;
-    width: 100%;
-  }
-  .lists-container .column  {
-    width: 50%;
-  }
-
   .item {
-    font-size: 1rem;
-  }
-
-  .tab-bar-container {
-    padding-left: 21.8rem;
-    box-sizing: border-box;
-    width: 100%;
-    /*min-height: 2.3rem;*/
-    height: 3rem;
-    display: flex;
-    flex-direction: row;
-  }
-
-  .tab-bar {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    gap: 1.5rem;
-    justify-content: space-around;
-    padding-left: 12%;
-    padding-right: 12%;
-    flex-wrap: wrap;
-  }
-
-  .tab-title.active h1 {
-    font-weight: 600;
-    color: yellow;
-    text-shadow:
-    -1px 0 0 blue,  /* left */
-    0 -1px 0 blue; /* top */
-  }
-
-  .tab-title h1 {
-    width: 100%;
-    text-align: center;
-    justify-content: center;
-    color: blue;
-    text-shadow:
-    -1px 0 0 yellow,  /* left */
-    0 -1px 0 yellow; /* top */
+    font-size: 1em;
   }
 
 
   /*
   .main-container {
-    background: grey;
-    opacity: 70%;
+  background: grey;
+  opacity: 70%;
   }
   .quote-container {
-    background: yellow;
-    opacity: 70%;
+  background: yellow;
+  opacity: 70%;
   }
   .top-container {
-    background: green;
-    opacity: 70%;
-    }
+  background: green;
+  opacity: 70%;
+  }
   .tab-title {
-    background: magenta;
-    opacity: 70%;
+  background: magenta;
+  opacity: 70%;
   }
   .column {
-    background: yellow;
-    border: solid 1px black;
+  background: yellow;
+  border: solid 1px black;
   }
   .lists-container {
-    background: cyan;
-    border: solid 1px black;
-    opacity: 70%;
+  background: cyan;
+  border: solid 1px black;
+  opacity: 70%;
+  }
+  .window-content {
+  background: blue;
+  opacity: 70%;
   }
   .main {
-    background: purple;
-    opacity: 70%;
+  background: purple;
+  opacity: 70%;
   }
   /* debug */
 
@@ -266,7 +292,9 @@
 
 
 <div class="wrapper" id="wrapper" class:bg-loaded={bgLoaded}>
-  <div class="window">
+  <div class="scene">
+    <img class="frame" src="/window-frame.png" alt=""/>
+    <div class="window-content"> </div>
     <div class="top-container">
       <div class="title">
         <span>{title}</span>
@@ -297,22 +325,22 @@
     </div>
     <div class="main-container">
       <div class="main">
-      {#each currentRows as row}
-        <div class="lists-container">
-          {#each row as section}
-            <div class="column">
-              <h2>{section.icon} {section.title}</h2>
-              <ul>
-                {#each section.items as item}
-                  <li class="item">
-                    <a href={item.url} rel="noopener noreferrer">({item.shortcut}) {item.name}</a>
-                  </li>
-                {/each}
-              </ul>
-            </div>
-          {/each}
-        </div>
-      {/each}
+        {#each currentRows as row}
+          <div class="lists-container">
+            {#each row as section}
+              <div class="column">
+                <h2>{section.icon} {section.title}</h2>
+                <ul>
+                  {#each section.items as item}
+                    <li class="item">
+                      <a href={item.url} rel="noopener noreferrer">({item.shortcut}) {item.name}</a>
+                    </li>
+                  {/each}
+                </ul>
+              </div>
+            {/each}
+          </div>
+        {/each}
       </div>
     </div>
   </div>

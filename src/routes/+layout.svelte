@@ -1,6 +1,7 @@
 <svelte:head>
-  <link rel="preload" as="image" href="/time-waits-for-no-one.png" />
-  <link rel="preload" as="image" href="/window-nakamura.png" />
+  <link rel="preload" as="image" href="/background.png" />
+  <link rel="preload" as="image" href="/window-frame.png" />
+  <link rel="preload" as="image" href="/window-content.png" />
 </svelte:head>
 
 <slot />
