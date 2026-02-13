@@ -84,7 +84,7 @@
     width: min(1000px, 95vw, calc(95vh * 1000 / 610));
     aspect-ratio: 1000 / 610;
 
-  font-size: clamp(8px, 1.35vmin, 18px);
+  font-size: clamp(12px, 1.35vmin, 18px);
   }
 
 
@@ -248,7 +248,7 @@
   }
 
   .item {
-    font-size: 1em;
+    font-size: 1.1em;
   }
 
 
