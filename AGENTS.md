@@ -1,0 +1,274 @@
+# AGENTS.md - Agent Guidelines for Startpage Project
+
+This file provides guidelines for agentic coding agents operating in this repository.
+
+## Project Overview
+
+This is a SvelteKit-based browser startpage with keyboard navigation, tabbed categories (hacking/work/personal), and a retro window UI aesthetic.
+
+## Build/Lint/Test Commands
+
+### Development
+
+```bash
+# Start development server
+npm run dev
+
+# Build for production
+npm run build
+
+# Preview production build
+npm run preview
+```
+
+### Type Checking
+
+```bash
+# Run Svelte type checking (single run)
+npm run check
+
+# Run type checking in watch mode
+npm run check:watch
+```
+
+### Formatting
+
+```bash
+# Format all files with Prettier
+npm run format
+```
+
+### Linting
+
+```bash
+# Check linting (Prettier + ESLint)
+npm run lint
+
+# Note: This project uses ESLint with TypeScript support
+```
+
+### Running a Single Test
+
+This project does not currently have a test suite configured. If tests are added in the future:
+
+```bash
+# Run a specific test file (if using Vitest/Jest)
+npm run test -- <test-file-path>
+
+# Or with specific test name pattern
+npm run test -- --grep "<test-name-pattern>"
+```
+
+## Code Style Guidelines
+
+### General Principles
+
+- Follow the existing code patterns in the repository
+- Keep code readable and maintainable
+- Use meaningful variable and function names
+- Add comments for complex logic
+
+### TypeScript
+
+- Use TypeScript for all new code
+- Enable `strict` mode in tsconfig.json
+- Define proper types for function parameters and return values
+- Use interface definitions for complex data structures
+
+```typescript
+// Good
+interface QuickAccessItem {
+	url: string;
+	shortcut: string;
+	name: string;
+}
+
+// Good - explicit return type
+function buildShortcutMap(rows: Section[][]): Map<string, string> {
+	// ...
+}
+```
+
+### Svelte 5
+
+This project uses Svelte 5 (runes mode). Key patterns:
+
+- Use `$state()` for reactive state
+- Use `$derived()` for derived values
+- Use `$effect()` for side effects
+- Use event handlers like `onclick` instead of `on:click`
+
+```svelte
+<!-- Svelte 5 syntax -->
+<script>
+	let count = $state(0);
+	let doubled = $derived(count * 2);
+
+	function increment() {
+		count += 1;
+	}
+</script>
+
+<button onclick={increment}>{count} x 2 = {doubled}</button>
+```
+
+Note: The existing codebase uses a mix of Svelte 4 and 5 patterns. New code should prefer Svelte 5 runes syntax when possible.
+
+### Imports
+
+- Use absolute imports with `$lib` alias for internal modules
+- Group imports logically (external, internal)
+
+```typescript
+// External imports
+import { onMount } from 'svelte';
+
+// Internal imports
+import { tabs, naming, title, quote } from '$lib/config';
+```
+
+### Formatting (Prettier)
+
+The project uses Prettier with these settings (from `.prettierrc`):
+
+- Use tabs for indentation
+- Single quotes for strings
+- No trailing commas
+- Print width: 100 characters
+- Use `prettier-plugin-svelte` for `.svelte` files
+
+```bash
+# Format before committing
+npm run format
+```
+
+### Naming Conventions
+
+- **Variables/functions**: camelCase (`currentTabIndex`, `buildShortcutMap`)
+- **Constants**: camelCase or SCREAMING_SNAKE_CASE depending on usage
+- **Components/Classes**: PascalCase (for Svelte components)
+- **Files**: kebab-case for general files, PascalCase for Svelte components
+
+### CSS/Styling
+
+- Use scoped styles in Svelte components
+- Prefer CSS custom properties for theming
+- Use `rem` units for scalability
+- Use `clamp()` for responsive typography
+
+```css
+/* Example from +page.svelte */
+font-size: clamp(12px, 1.35vmin, 18px);
+```
+
+### Error Handling
+
+- Use try/catch for async operations
+- Handle keyboard events gracefully (e.g., prevent default when needed)
+- Clean up event listeners in `onDestroy` / cleanup functions
+
+```typescript
+// Good - cleanup in onMount return
+onMount(() => {
+	window.addEventListener('keydown', handleKey);
+
+	return () => {
+		window.removeEventListener('keydown', handleKey);
+		clearInterval(interval);
+	};
+});
+```
+
+### Keyboard Navigation
+
+- Handle single-key shortcuts (lowercase for main, uppercase variants for alternatives)
+- Use `e.key` for keyboard event handling
+- Consider key conflicts with browser defaults
+
+## Project Structure
+
+```
+src/
+├── lib/
+│   ├── config.ts      # Main configuration (tabs, links, shortcuts)
+│   └── index.ts       # Library exports
+├── routes/
+│   ├── +layout.svelte # Layout component
+│   ├── +layout.js     # Layout load function
+│   ├── +page.svelte   # Main startpage component
+│   └── +page.js       # Page load function
+├── app.html           # HTML template
+└── app.d.ts           # TypeScript declarations
+static/
+├── background.png     # Main background
+├── window-frame.png  # Window frame overlay
+├── window-content.png # Content area background
+└── fonts/            # Font files (Montserrat, Roboto)
+```
+
+## Configuration
+
+### Adding New Links
+
+Edit `src/lib/config.ts` to add new shortcuts or modify tabs:
+
+```typescript
+// Add to existing category or create new one
+const newSection = {
+	title: 'New Section',
+	icon: '🚀',
+	items: [
+		{
+			url: 'https://example.com',
+			shortcut: 'x', // Single character
+			name: 'Example Link'
+		}
+	]
+};
+```
+
+### Keyboard Shortcuts
+
+- `t` / `T`: Cycle through tabs (forward/backward)
+- `0-9`, letters: Navigate to assigned URLs
+- Custom shortcuts are defined in `config.ts` items
+
+## Linting Configuration
+
+The project uses ESLint with:
+
+- `@eslint/js` - JavaScript recommended rules
+- `typescript-eslint` - TypeScript support
+- `eslint-plugin-svelte` - Svelte support
+- `eslint-config-prettier` - Disable conflicting Prettier rules
+
+Run linting:
+
+```bash
+npm run lint
+```
+
+## Common Tasks
+
+### Adding a New Tab
+
+1. Add tab data in `src/lib/config.ts`
+2. Register the tab in the `tabs` array
+3. Add tab naming in the `naming` object
+
+### Modifying the Background
+
+1. Replace `static/background.png`
+2. Consider aspect ratio (currently optimized for 1000x610 window)
+
+### Changing the Theme/Colors
+
+Edit CSS variables in `src/routes/+page.svelte` `<style>` block.
+
+## Additional Resources
+
+- [Svelte 5 Docs](https://svelte.dev/docs/svelte)
+- [SvelteKit Docs](https://kit.svelte.dev/docs/)
+- [TypeScript Docs](https://www.typescriptlang.org/docs/)
+- [Prettier Docs](https://prettier.io/docs/)
+- [ESLint Docs](https://eslint.org/docs/)
