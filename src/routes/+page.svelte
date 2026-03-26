@@ -324,7 +324,7 @@
             on:click={() => currentTabIndex = i}
           >
             <h1>
-              HE{tab.title}
+              {tab.title}
             </h1>
           </div>
         {/each}
