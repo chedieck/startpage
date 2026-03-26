@@ -1,11 +1,15 @@
 <script>
-  import { tabs, naming, title, quote } from '$lib/config';
+  import { tabs_dict, title, quote } from '$lib/config';
   import { onMount } from 'svelte';
   let time = `${(new Date()).toLocaleDateString()} @${(new Date()).toLocaleTimeString()}`
 
   let bgLoaded = false;
 
   let currentTabIndex = 0;
+  const tabs = Object
+  .keys(tabs_dict)
+  .sort((a, b) => Number(a) - Number(b))
+  .map(k => tabs_dict[Number(k)].data);
   $: currentRows = tabs[currentTabIndex];
 
   function buildShortcutMap(rows) {
@@ -65,6 +69,9 @@
 </script>
 
 <style>
+  .empty {
+    z-index: -1281;
+  }
   .wrapper {
     background: #000 url('/background.png') center / cover no-repeat;
     width: 100vw;
@@ -160,9 +167,9 @@
   /* === Tabs === */
 
   .tab-bar-container {
-    left: 28.8%;
+    left: 40%;
     top: 15.5%;
-    width: 73.5%;
+    width: 50%;
     height: 9%;
     display: flex;
     align-items: center;
@@ -173,7 +180,7 @@
     display: flex;
     gap: 1.5rem;
     justify-content: space-around;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
   }
 
   .tab-title.active h1 {
@@ -310,14 +317,14 @@
     </div>
     <div class="tab-bar-container">
       <div class="tab-bar">
-        {#each Object.values(naming) as tab, i (i)}
+        {#each Object.values(tabs_dict) as tab, i (i)}
           <div
             class="tab-title"
             class:active={i === currentTabIndex}
             on:click={() => currentTabIndex = i}
           >
             <h1>
-              {tab.title}
+              HE{tab.title}
             </h1>
           </div>
         {/each}
@@ -328,7 +335,7 @@
         {#each currentRows as row}
           <div class="lists-container">
             {#each row as section}
-              <div class="column">
+              <div class="column {section.items.length === 0 ? 'empty' : ''}">
                 <h2>{section.icon} {section.title}</h2>
                 <ul>
                   {#each section.items as item}
