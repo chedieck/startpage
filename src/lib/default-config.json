@@ -1,0 +1,61 @@
+{
+	"title": "My Startpage",
+	"quote": "Act as if what you do makes a difference. It does.",
+	"quickAccess": {
+		"title": "Quick Access",
+		"icon": "🐎",
+		"items": [
+			{ "url": "https://mail.google.com", "shortcut": "m", "name": "📧 Mail" },
+			{ "url": "https://calendar.google.com", "shortcut": "c", "name": "📅 Calendar" },
+			{ "url": "https://drive.google.com", "shortcut": "d", "name": "💾 Drive" },
+			{ "url": "https://github.com", "shortcut": "g", "name": "🐙 GitHub" }
+		]
+	},
+	"tabs": [
+		{
+			"title": "Work",
+			"icon": "💼",
+			"sections": [
+				{
+					"title": "Projects",
+					"icon": "🐙",
+					"items": [
+						{ "url": "https://github.com", "shortcut": "p", "name": "🐙 Projects" },
+						{ "url": "http://localhost:3000", "shortcut": "l", "name": "🌐 Local Dev" }
+					]
+				},
+				{
+					"title": "Tools",
+					"icon": "⚒️",
+					"items": [
+						{ "url": "https://notion.so", "shortcut": "n", "name": "📝 Notion" },
+						{ "url": "https://figma.com", "shortcut": "f", "name": "🎨 Figma" }
+					]
+				}
+			]
+		},
+		{
+			"title": "Personal",
+			"icon": "🏠",
+			"sections": [
+				{
+					"title": "Entertainment",
+					"icon": "📺",
+					"items": [
+						{ "url": "https://youtube.com", "shortcut": "y", "name": "▶️ YouTube" },
+						{ "url": "https://reddit.com", "shortcut": "r", "name": "💬 Reddit" },
+						{ "url": "https://twitch.tv", "shortcut": "T", "name": "📺 Twitch" }
+					]
+				},
+				{
+					"title": "Social",
+					"icon": "💬",
+					"items": [
+						{ "url": "https://twitter.com", "shortcut": "t", "name": "🐦 Twitter" },
+						{ "url": "https://discord.com", "shortcut": "D", "name": "💬 Discord" }
+					]
+				}
+			]
+		}
+	]
+}

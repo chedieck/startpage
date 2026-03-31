@@ -1,12 +1,14 @@
 [Unit]
-Description=Startpage Dev Server
+Description=Startpage Server
 After=network.target
 
 [Service]
 Type=simple
 WorkingDirectory=/home/user/codes/startpage
-ExecStart=/usr/bin/yarn dev --port 51991
+ExecStart=/usr/bin/node build
 Restart=on-failure
+Environment=PORT=51991
+Environment=HOST=127.0.0.1
 
 [Install]
 WantedBy=default.target
