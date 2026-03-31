@@ -415,7 +415,7 @@
 	}
 
 	.title-bar {
-		background: linear-gradient(180deg, #0a5a7e 0%, #084d6e 50%, #064058 100%);
+		background: #084d6e;
 		padding: 4px 6px;
 		display: flex;
 		justify-content: space-between;
@@ -426,7 +426,7 @@
 	}
 
 	.title-text {
-		color: #eee;
+		color: #00ffe5;
 		font-weight: bold;
 		font-size: 18px;
 		text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
@@ -441,7 +441,7 @@
 		width: 24px;
 		height: 24px;
 		border: 1px outset #3a6a7a;
-		background: linear-gradient(180deg, #2a5a6a 0%, #1a4a5a 100%);
+		background: #2a5a6a;
 		font-size: 14px;
 		display: flex;
 		align-items: center;
@@ -452,18 +452,18 @@
 	}
 
 	.title-btn:hover {
-		background: linear-gradient(180deg, #3a6a7a 0%, #2a5a6a 100%);
+		background: #3a6a7a;
 	}
 
 	.title-btn.close {
-		background: linear-gradient(180deg, #8a3a3a 0%, #6a2a2a 100%);
+		background: #8a3a3a;
 		color: #fff;
 		font-weight: bold;
 		font-size: 18px;
 	}
 
 	.title-btn.close:hover {
-		background: linear-gradient(180deg, #aa4a4a 0%, #8a3a3a 100%);
+		background: #aa4a4a;
 	}
 
 	.window-body {
@@ -484,7 +484,7 @@
 	}
 
 	.tab {
-		background: linear-gradient(180deg, #1a3a4a 0%, #0a2a3a 100%);
+		background: #1a3a4a;
 		border: 1px outset #2a5a6a;
 		border-bottom: none;
 		padding: 6px 16px;
@@ -497,9 +497,9 @@
 	}
 
 	.tab.active {
-		background: linear-gradient(180deg, #2176a2 0%, #1a5a7e 100%);
+		background: #1d78a7;
 		border: 1px solid #3a8aae;
-		border-bottom: 1px solid #2176a2;
+		border-bottom: 1px solid #1d78a7;
 		color: #00ffe5;
 		z-index: 1;
 	}
@@ -507,6 +507,7 @@
 	.tab.add-tab {
 		padding: 6px 10px;
 		font-weight: bold;
+		color: #e8c170;
 	}
 
 	.tab-content {
@@ -535,7 +536,7 @@
 	.field label {
 		width: 140px;
 		font-weight: bold;
-		color: #a2d2ff;
+		color: #e8c170;
 	}
 
 	.xp-input {
@@ -597,7 +598,7 @@
 
 	.xp-btn {
 		border: 1px outset #3a6a7a;
-		background: linear-gradient(180deg, #2a5a6a 0%, #1a4a5a 100%);
+		background: #2a5a6a;
 		padding: 6px 14px;
 		font-size: 14px;
 		cursor: pointer;
@@ -606,7 +607,7 @@
 	}
 
 	.xp-btn:hover {
-		background: linear-gradient(180deg, #3a6a7a 0%, #2a5a6a 100%);
+		background: #3a6a7a;
 	}
 
 	.xp-btn:active {
@@ -614,12 +615,12 @@
 	}
 
 	.xp-btn.primary {
-		background: linear-gradient(180deg, #0a7a9e 0%, #084d6e 100%);
+		background: #0a7a9e;
 		color: #00ffe5;
 	}
 
 	.xp-btn.primary:hover {
-		background: linear-gradient(180deg, #0a8aae 0%, #0a5d7e 100%);
+		background: #0a8aae;
 	}
 
 	.xp-btn.add {
@@ -629,17 +630,17 @@
 
 	.xp-btn.remove {
 		padding: 4px 8px;
-		background: linear-gradient(180deg, #4a2a2a 0%, #3a1a1a 100%);
+		background: #4a2a2a;
 		color: #ff8888;
 	}
 
 	.xp-btn.danger {
-		background: linear-gradient(180deg, #8a3a3a 0%, #6a2a2a 100%);
+		background: #8a3a3a;
 		color: #ff8888;
 	}
 
 	.xp-btn.danger:hover {
-		background: linear-gradient(180deg, #aa4a4a 0%, #8a3a3a 100%);
+		background: #aa4a4a;
 	}
 
 	.tab-settings {
@@ -663,7 +664,7 @@
 	}
 
 	.section-block {
-		border: 1px inset #2a5a6a;
+		border: 1px solid #3a6a5a;
 		padding: 12px;
 		background: #0f2f3f;
 	}
@@ -677,7 +678,7 @@
 	}
 
 	.status-text {
-		color: #a2d2ff;
+		color: #c0c0c0;
 	}
 
 	.button-bar {
@@ -702,7 +703,7 @@
 	}
 
 	.file-input::file-selector-button {
-		background: linear-gradient(180deg, #2a5a6a 0%, #1a4a5a 100%);
+		background: #2a5a6a;
 		border: 1px outset #3a6a7a;
 		color: #eee;
 		padding: 4px 12px;
@@ -711,7 +712,7 @@
 	}
 
 	.file-input::file-selector-button:hover {
-		background: linear-gradient(180deg, #3a6a7a 0%, #2a5a6a 100%);
+		background: #3a6a7a;
 	}
 
 	.image-preview {

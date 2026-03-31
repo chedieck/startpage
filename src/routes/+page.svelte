@@ -240,7 +240,7 @@
 		left: 4px;
 		top: 4px;
 		width: calc(100% - 8px);
-		height: 7.5%;
+		height: 6.5%;
 		background: #004e69;
 	}
 
@@ -276,7 +276,7 @@
 
 	.frame-tab-strip {
 		width: 100%;
-		height: 9%;
+		height: 6%;
 		background: #a6d8ff;
 		border-top: 1px solid #808080;
 		border-left: 1px solid #808080;
@@ -304,10 +304,10 @@
 	}
 
 	.window-content {
-		left: 2.1%;
-		top: 8.8%;
-		width: 31.5%;
-		height: 88.5%;
+		left: 1%;
+		top: 9.3%;
+		width: 31.3%;
+		height: 89%;
 		background-size: cover;
 		background-position: center;
 		background-repeat: no-repeat;
@@ -343,7 +343,7 @@
 	.quote-text {
 		color: #222;
 		font-style: italic;
-		font-size: 1.2em;
+		font-size: 1.4em;
 	}
 
 	.tab-bar-container {
@@ -359,6 +359,7 @@
 		width: 100%;
 		display: flex;
 		gap: 1.5rem;
+    padding-top: 1rem;
 		justify-content: space-around;
 		flex-wrap: nowrap;
 	}
