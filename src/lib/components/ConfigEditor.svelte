@@ -479,7 +479,7 @@
 	.tab-strip {
 		display: flex;
 		background: #1a3a4a;
-		padding: 4px 4px 0 4px;
+		padding: 4px 4px 2px 4px;
 		gap: 1px;
 	}
 
