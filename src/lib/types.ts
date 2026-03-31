@@ -23,6 +23,10 @@ export interface StartpageConfig {
 	quote: string;
 	quickAccess: Section;
 	tabs: TabDefinition[];
+	/** Path or URL for the desktop wallpaper background image */
+	backgroundImage?: string;
+	/** Path or URL for the left sidebar content image (inside the window frame) */
+	frameContentImage?: string;
 }
 
 export interface TabDefinition {
@@ -55,10 +59,14 @@ export function resolveConfig(config: StartpageConfig): {
 	title: string;
 	quote: string;
 	tabs: ResolvedTab[];
+	backgroundImage?: string;
+	frameContentImage?: string;
 } {
 	return {
 		title: config.title,
 		quote: config.quote,
-		tabs: config.tabs.map((t) => resolveTab(t, config.quickAccess))
+		tabs: config.tabs.map((t) => resolveTab(t, config.quickAccess)),
+		backgroundImage: config.backgroundImage,
+		frameContentImage: config.frameContentImage
 	};
 }

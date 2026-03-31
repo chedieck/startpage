@@ -15,6 +15,9 @@
 	let currentRows = $derived(tabs[currentTabIndex]?.data ?? []);
 	let shortcutMap = $derived(buildShortcutMap(currentRows));
 
+	let backgroundImage = $derived(data.resolved.backgroundImage ?? '/background.png');
+	let frameContentImage = $derived(data.resolved.frameContentImage ?? '/window-content.png');
+
 	function formatTime(): string {
 		const now = new Date();
 		return `${now.toLocaleDateString()} @${now.toLocaleTimeString()}`;
@@ -65,7 +68,7 @@
 
 	onMount(() => {
 		const img = new Image();
-		img.src = '/background.png';
+		img.src = backgroundImage;
 		img.onload = () => {
 			bgLoaded = true;
 		};
@@ -83,10 +86,28 @@
 	});
 </script>
 
-<div class="wrapper" id="wrapper" class:bg-loaded={bgLoaded}>
+<div
+	class="wrapper"
+	id="wrapper"
+	class:bg-loaded={bgLoaded}
+	style:background-image="url('{backgroundImage}')"
+>
 	<div class="scene">
-		<img class="frame" src="/window-frame.png" alt="" />
-		<div class="window-content"></div>
+		<div class="css-frame">
+			<div class="frame-outer">
+				<div class="frame-inner">
+					<div class="frame-title-bar"></div>
+					<div class="frame-body">
+						<div class="frame-sidebar"></div>
+						<div class="frame-right">
+							<div class="frame-tab-strip"></div>
+							<div class="frame-content"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="window-content" style:background-image="url('{frameContentImage}')"></div>
 		<div class="top-container">
 			<div class="title">
 				<span>{data.resolved.title}</span>
@@ -141,10 +162,10 @@
 
 		<div
 			class="desktop-icon"
-			ondblclick={() => (editorOpen = true)}
+			onclick={() => (editorOpen = true)}
 			role="button"
 			tabindex="0"
-			title="Double-click to edit configuration"
+			title="Click to edit configuration"
 		>
 			<div class="desktop-icon-img">⚙️</div>
 			<div class="desktop-icon-label">Settings</div>
@@ -166,6 +187,8 @@
 	}
 	.wrapper {
 		background: #000 url('/background.png') center / cover no-repeat;
+		background-size: cover;
+		background-position: center;
 		width: 100vw;
 		height: 100vh;
 		display: grid;
@@ -183,14 +206,91 @@
 		font-size: clamp(12px, 1.35vmin, 18px);
 	}
 
-	.frame {
+	.css-frame {
 		position: absolute;
 		inset: 0;
 		width: 100%;
 		height: 100%;
-		object-fit: contain;
 		pointer-events: none;
 		z-index: 1;
+	}
+
+	.frame-outer {
+		position: absolute;
+		inset: 0;
+		background: #c0c0c0;
+		border-top: 2px solid #fff;
+		border-left: 2px solid #fff;
+		border-bottom: 2px solid #000;
+		border-right: 2px solid #000;
+	}
+
+	.frame-inner {
+		position: absolute;
+		inset: 2px;
+		background: #c0c0c0;
+		border-top: 1px solid #dfdfdf;
+		border-left: 1px solid #dfdfdf;
+		border-bottom: 1px solid #808080;
+		border-right: 1px solid #808080;
+	}
+
+	.frame-title-bar {
+		position: absolute;
+		left: 4px;
+		top: 4px;
+		width: calc(100% - 8px);
+		height: 7.5%;
+		background: #004e69;
+	}
+
+	.frame-body {
+		position: absolute;
+		left: 0;
+		top: 8.5%;
+		width: 100%;
+		height: 91.5%;
+		display: flex;
+		padding: 0 4px 4px 4px;
+		box-sizing: border-box;
+		gap: 4px;
+	}
+
+	.frame-sidebar {
+		width: 32%;
+		height: 100%;
+		background: #ffffff;
+		border-top: 1px solid #808080;
+		border-left: 1px solid #808080;
+		border-bottom: 1px solid #dfdfdf;
+		border-right: 1px solid #dfdfdf;
+	}
+
+	.frame-right {
+		flex: 1;
+		height: 100%;
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+	}
+
+	.frame-tab-strip {
+		width: 100%;
+		height: 9%;
+		background: #a6d8ff;
+		border-top: 1px solid #808080;
+		border-left: 1px solid #808080;
+		border-bottom: 1px solid #dfdfdf;
+		border-right: 1px solid #dfdfdf;
+	}
+
+	.frame-content {
+		flex: 1;
+		background: #1d78a7;
+		border-top: 1px solid #808080;
+		border-left: 1px solid #808080;
+		border-bottom: 1px solid #dfdfdf;
+		border-right: 1px solid #dfdfdf;
 	}
 
 	.window-content,
@@ -208,7 +308,9 @@
 		top: 8.8%;
 		width: 31.5%;
 		height: 88.5%;
-		background: url('/window-content.png') center / cover no-repeat;
+		background-size: cover;
+		background-position: center;
+		background-repeat: no-repeat;
 	}
 
 	.top-container {
