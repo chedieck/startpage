@@ -126,10 +126,23 @@
 			sections: [{ title: 'Section 1', icon: '📁', items: [] }]
 		};
 		localConfig.tabs = [...localConfig.tabs, newTab];
+		activeTab = localConfig.tabs.length + 2;
 	}
 
 	function removeTab(tabIndex: number) {
 		localConfig.tabs = localConfig.tabs.filter((_, i) => i !== tabIndex);
+		if (activeTab > 2 && activeTab >= tabIndex + 3) {
+			activeTab = Math.max(0, activeTab - 1);
+		}
+	}
+
+	function moveTab(tabIndex: number, direction: -1 | 1) {
+		const target = tabIndex + direction;
+		if (target < 0 || target >= localConfig.tabs.length) return;
+		const tabs = [...localConfig.tabs];
+		[tabs[tabIndex], tabs[target]] = [tabs[target], tabs[tabIndex]];
+		localConfig.tabs = tabs;
+		activeTab = target + 3;
 	}
 
 	async function uploadImage(file: File, slot: 'background' | 'frameContent') {
@@ -197,9 +210,7 @@
 						{label}
 					</button>
 				{/each}
-				{#if activeTab >= 3}
-					<button class="tab add-tab" onclick={addTab}>+</button>
-				{/if}
+				<button class="tab add-tab" onclick={addTab}>+</button>
 			</div>
 
 			<div class="tab-content">
@@ -313,9 +324,25 @@
 										maxlength="2"
 									/>
 								</div>
-								<button class="xp-btn danger" onclick={() => removeTab(tabIdx)}>
-									Remove Tab
-								</button>
+								<div class="tab-actions">
+									<button
+										class="xp-btn"
+										onclick={() => moveTab(tabIdx, -1)}
+										disabled={tabIdx === 0}
+									>
+										◀ Move Left
+									</button>
+									<button
+										class="xp-btn"
+										onclick={() => moveTab(tabIdx, 1)}
+										disabled={tabIdx === localConfig.tabs.length - 1}
+									>
+										Move Right ▶
+									</button>
+									<button class="xp-btn danger" onclick={() => removeTab(tabIdx)}>
+										Remove Tab
+									</button>
+								</div>
 							</div>
 
 							<div class="sections-container">
@@ -645,6 +672,7 @@
 
 	.tab-settings {
 		display: flex;
+		flex-wrap: wrap;
 		gap: 12px;
 		align-items: flex-end;
 		padding-bottom: 16px;
@@ -655,6 +683,17 @@
 	.tab-settings .field {
 		flex-direction: column;
 		align-items: flex-start;
+	}
+
+	.tab-actions {
+		display: flex;
+		gap: 8px;
+		align-items: center;
+	}
+
+	.tab-actions .xp-btn:disabled {
+		opacity: 0.4;
+		cursor: not-allowed;
 	}
 
 	.sections-container {

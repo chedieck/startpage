@@ -186,9 +186,10 @@
 		z-index: -1281;
 	}
 	.wrapper {
-		background: #000 url('/background.png') center / cover no-repeat;
+		background-color: #000;
 		background-size: cover;
 		background-position: center;
+		background-repeat: no-repeat;
 		width: 100vw;
 		height: 100vh;
 		display: grid;
@@ -359,7 +360,7 @@
 		width: 100%;
 		display: flex;
 		gap: 1.5rem;
-    padding-top: 1rem;
+		padding-top: 1rem;
 		justify-content: space-around;
 		flex-wrap: nowrap;
 	}
