@@ -179,6 +179,15 @@
 		}
 	}
 
+	/** Drop the custom image so the bundled default is used again. */
+	function resetImage(slot: 'background' | 'frameContent') {
+		if (slot === 'background') {
+			localConfig.backgroundImage = undefined;
+		} else {
+			localConfig.frameContentImage = undefined;
+		}
+	}
+
 	function handleSave() {
 		onSave(localConfig);
 	}
@@ -189,11 +198,15 @@
 <div
 	class="backdrop"
 	onclick={handleBackdropClick}
+	onkeydown={handleKeydown}
 	role="dialog"
+	tabindex="-1"
 	aria-modal="true"
 	aria-labelledby="window-title"
 >
 	<div class="window" style="left: {windowX}px; top: {windowY}px;" role="document">
+		<!-- The title bar is a mouse-only drag handle; the window is fully usable without it. -->
+		<!-- svelte-ignore a11y_no_static_element_interactions -->
 		<div class="title-bar" onmousedown={startDrag}>
 			<div class="title-text" id="window-title">Settings</div>
 			<div class="title-buttons">
@@ -217,9 +230,10 @@
 				{#if activeTab === 0}
 					<div class="panel">
 						<div class="field">
-							<label>Background Image</label>
+							<label for="background-upload">Wallpaper</label>
 							<div class="image-upload">
 								<input
+									id="background-upload"
 									type="file"
 									accept="image/*"
 									onchange={handleBackgroundUpload}
@@ -227,16 +241,22 @@
 								/>
 								{#if localConfig.backgroundImage}
 									<div class="image-preview">
-										<img src={localConfig.backgroundImage} alt="Background preview" />
+										<img src={localConfig.backgroundImage} alt="Wallpaper preview" />
 										<span class="image-path">{localConfig.backgroundImage}</span>
+										<button class="xp-btn remove" onclick={() => resetImage('background')}>
+											Use default
+										</button>
 									</div>
+								{:else}
+									<span class="image-path">Using the bundled default wallpaper.</span>
 								{/if}
 							</div>
 						</div>
 						<div class="field">
-							<label>Frame Content Image</label>
+							<label for="frame-content-upload">Sidebar Image</label>
 							<div class="image-upload">
 								<input
+									id="frame-content-upload"
 									type="file"
 									accept="image/*"
 									onchange={handleFrameContentUpload}
@@ -244,9 +264,14 @@
 								/>
 								{#if localConfig.frameContentImage}
 									<div class="image-preview">
-										<img src={localConfig.frameContentImage} alt="Frame content preview" />
+										<img src={localConfig.frameContentImage} alt="Sidebar preview" />
 										<span class="image-path">{localConfig.frameContentImage}</span>
+										<button class="xp-btn remove" onclick={() => resetImage('frameContent')}>
+											Use default
+										</button>
 									</div>
+								{:else}
+									<span class="image-path">Using the bundled default sidebar image.</span>
 								{/if}
 							</div>
 						</div>
@@ -312,12 +337,13 @@
 						<div class="panel">
 							<div class="tab-settings">
 								<div class="field">
-									<label>Tab Title</label>
-									<input type="text" bind:value={tab.title} class="xp-input" />
+									<label for="tab-title-input">Tab Title</label>
+									<input id="tab-title-input" type="text" bind:value={tab.title} class="xp-input" />
 								</div>
 								<div class="field">
-									<label>Tab Icon</label>
+									<label for="tab-icon-input">Tab Icon</label>
 									<input
+										id="tab-icon-input"
 										type="text"
 										bind:value={tab.icon}
 										class="xp-input icon-input"
