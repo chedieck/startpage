@@ -18,6 +18,32 @@
 	let backgroundImage = $derived(data.resolved.backgroundImage ?? '/background.png');
 	let frameContentImage = $derived(data.resolved.frameContentImage ?? '/window-content.png');
 
+	let mainEl = $state<HTMLElement | undefined>();
+
+	/**
+	 * Lists wrap into extra columns on their own (see the `ul` rule in the
+	 * stylesheet). When even the extra columns do not fit the box, shrink the
+	 * list's text until it does, so a crowded section stays inside its square
+	 * instead of spilling over the window.
+	 */
+	function fitLists(rows: Section[][] = currentRows) {
+		if (!mainEl || rows.length === 0) return;
+		for (const list of mainEl.querySelectorAll<HTMLElement>('ul')) {
+			let fit = 1;
+			list.style.setProperty('--fit', '1');
+			while (fit > 0.5 && list.scrollWidth > list.clientWidth + 1) {
+				fit -= 0.05;
+				list.style.setProperty('--fit', fit.toFixed(2));
+			}
+		}
+	}
+
+	const refitLists = () => fitLists();
+
+	$effect(() => {
+		fitLists(currentRows);
+	});
+
 	function formatTime(): string {
 		const now = new Date();
 		return `${now.toLocaleDateString()} @${now.toLocaleTimeString()}`;
@@ -35,6 +61,14 @@
 			}
 		}
 		return map;
+	}
+
+	/** Enter/Space on a focused element behaves like a click. */
+	function activateOnKey(e: KeyboardEvent, action: () => void) {
+		if (e.key === 'Enter' || e.key === ' ') {
+			e.preventDefault();
+			action();
+		}
 	}
 
 	function handleKey(e: KeyboardEvent) {
@@ -78,13 +112,21 @@
 		}, 100);
 
 		window.addEventListener('keydown', handleKey);
+		window.addEventListener('resize', refitLists);
+		document.fonts?.ready.then(refitLists);
 
 		return () => {
 			window.removeEventListener('keydown', handleKey);
+			window.removeEventListener('resize', refitLists);
 			clearInterval(interval);
 		};
 	});
 </script>
+
+<svelte:head>
+	<link rel="preload" as="image" href={backgroundImage} />
+	<link rel="preload" as="image" href={frameContentImage} />
+</svelte:head>
 
 <div
 	class="wrapper"
@@ -128,6 +170,7 @@
 						class="tab-title"
 						class:active={i === currentTabIndex}
 						onclick={() => (currentTabIndex = i)}
+						onkeydown={(e) => activateOnKey(e, () => (currentTabIndex = i))}
 						role="tab"
 						tabindex="0"
 						aria-selected={i === currentTabIndex}
@@ -138,21 +181,23 @@
 			</div>
 		</div>
 		<div class="main-container">
-			<div class="main">
+			<div class="main" bind:this={mainEl}>
 				{#each currentRows as row, ri (ri)}
 					<div class="lists-container">
 						{#each row as section, si (si)}
-							<div class="column {section.items.length === 0 ? 'empty' : ''}">
-								<h2>{section.icon} {section.title}</h2>
-								<ul>
-									{#each section.items as item (item.shortcut)}
-										<li class="item">
-											<a href={item.url} target="_blank" rel="noopener noreferrer"
-												>({item.shortcut}) {item.name}</a
-											>
-										</li>
-									{/each}
-								</ul>
+							<div class="column">
+								{#if section.title || section.items.length}
+									<h2>{section.icon} {section.title}</h2>
+									<ul>
+										{#each section.items as item (item.shortcut)}
+											<li class="item">
+												<a href={item.url} target="_blank" rel="noopener noreferrer"
+													>({item.shortcut}) {item.name}</a
+												>
+											</li>
+										{/each}
+									</ul>
+								{/if}
 							</div>
 						{/each}
 					</div>
@@ -163,6 +208,7 @@
 		<div
 			class="desktop-icon"
 			onclick={() => (editorOpen = true)}
+			onkeydown={(e) => activateOnKey(e, () => (editorOpen = true))}
 			role="button"
 			tabindex="0"
 			title="Click to edit configuration"
@@ -182,9 +228,6 @@
 {/if}
 
 <style>
-	.empty {
-		z-index: -1281;
-	}
 	.wrapper {
 		background-color: #000;
 		background-size: cover;
@@ -201,10 +244,15 @@
 	}
 
 	.scene {
+		/* Everything inside the scene is sized in em, and the em is a fixed
+		   fraction of the scene width. The whole window therefore scales as a
+		   single unit: browser zoom changes how big it looks, never how it is
+		   laid out. */
+		--scene-width: min(1000px, 95vw, calc(95vh * 1000 / 610));
 		position: relative;
-		width: min(1000px, 95vw, calc(95vh * 1000 / 610));
+		width: var(--scene-width);
 		aspect-ratio: 1000 / 610;
-		font-size: clamp(12px, 1.35vmin, 18px);
+		font-size: calc(var(--scene-width) / 62.5);
 	}
 
 	.css-frame {
@@ -329,6 +377,14 @@
 	.top-container .time {
 		font-weight: bold;
 		font-size: 1.3em;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.top-container .time {
+		flex: none;
+		padding-left: 1em;
 	}
 
 	.quote-container {
@@ -345,24 +401,41 @@
 		color: #222;
 		font-style: italic;
 		font-size: 1.4em;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 
 	.tab-bar-container {
-		left: 40%;
+		left: 34.8%;
 		top: 15.5%;
-		width: 50%;
+		width: 62.5%;
 		height: 9%;
 		display: flex;
 		align-items: center;
+		padding: 0 1%;
+		overflow: hidden;
 	}
 
 	.tab-bar {
 		width: 100%;
 		display: flex;
-		gap: 1.5rem;
-		padding-top: 1rem;
+		gap: 1em;
+		padding-top: 0.5em;
 		justify-content: space-around;
 		flex-wrap: nowrap;
+		overflow: hidden;
+	}
+
+	.tab-title {
+		min-width: 0;
+	}
+
+	.tab-title h1 {
+		margin: 0;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 
 	.tab-title.active h1 {
@@ -396,35 +469,62 @@
 
 	.main {
 		width: 100%;
+		height: 100%;
 		display: flex;
 		flex-direction: column;
-		justify-content: space-between;
+		gap: 1em;
 	}
 
 	.lists-container {
 		display: flex;
-		gap: 3rem;
+		gap: 2em;
 		width: 100%;
-		height: 50%;
+		flex: 1 1 0;
+		min-height: 0;
 	}
 
 	.column {
-		width: 50%;
+		flex: 1 1 0;
+		min-width: 0;
+		min-height: 0;
+		display: flex;
+		flex-direction: column;
 	}
 
 	h2 {
 		font-size: 2em;
-		margin-bottom: 1rem;
+		margin: 0 0 0.5em 0;
 		text-align: center;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 
+	/* A wrapping flex column: items stack downwards until they run out of
+	   room, then continue in a new column to the right instead of spilling
+	   out of the box. */
 	ul {
 		list-style: none;
+		margin: 0;
 		padding: 0;
+		font-size: calc(1em * var(--fit, 1));
+		flex: 1 1 0;
+		min-height: 0;
+		display: flex;
+		flex-flow: column wrap;
+		align-content: flex-start;
+		align-items: flex-start;
+		column-gap: 1.5em;
+		row-gap: 0.4em;
+		overflow: hidden;
 	}
 
 	li {
-		margin: 0.5rem 0;
+		flex: 0 0 auto;
+		max-width: 100%;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 
 	a {
@@ -449,7 +549,7 @@
 		flex-direction: column;
 		align-items: center;
 		cursor: pointer;
-		padding: 0.5rem;
+		padding: 0.5em;
 		border-radius: 4px;
 		user-select: none;
 	}
