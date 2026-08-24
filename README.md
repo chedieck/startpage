@@ -203,3 +203,8 @@ The interface font is [VT323](https://fonts.google.com/specimen/VT323) and the
 list font is [JetBrains Mono Nerd
 Font](https://github.com/ryanoasis/nerd-fonts), both under the SIL Open Font
 License; their license files sit next to them in `static/fonts/`.
+
+## License
+
+[AGPL-3.0-or-later](LICENSE). If you run a modified version of this as a
+service that other people can reach, they are entitled to its source.
