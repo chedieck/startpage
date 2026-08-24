@@ -4,11 +4,13 @@ After=network.target
 
 [Service]
 Type=simple
-WorkingDirectory=/home/user/codes/startpage
+WorkingDirectory=/opt/startpage
 ExecStart=/usr/bin/node build
 Restart=on-failure
 Environment=PORT=51991
 Environment=HOST=127.0.0.1
+# Uncomment to keep the config somewhere other than ~/.config/startpage/config.json
+# Environment=STARTPAGE_CONFIG=%h/.config/startpage/config.json
 
 [Install]
 WantedBy=default.target
