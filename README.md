@@ -1,38 +1,205 @@
-# sv
+# Startpage
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+A keyboard-driven browser start page that looks like a desktop from a computer
+lab in 1997. Every link has a single-key shortcut, links are grouped into four
+boxes, and boxes are grouped into tabs. Everything you see — the title, the
+quote, the tabs, the links, the wallpaper and the photo in the sidebar — comes
+from one JSON file, and there is a settings window for editing it if you would
+rather not touch JSON.
 
-## Creating a project
+![Screenshot of the start page with its default configuration](docs/screenshot.jpg)
 
-If you're seeing this, you've probably already done this step. Congrats!
+## How it works
+
+The page is a small SvelteKit app that you run on your own machine. It reads
+`~/.config/startpage/config.json` on every page load, so changing your links is
+a matter of editing that file (or using the settings window) and hitting
+refresh. Nothing is sent anywhere; there is no account, no database and no
+telemetry. The first time it starts, it writes a sample config for you.
+
+## Quick start
 
 ```bash
-# create a new project in the current directory
-npx sv create
-
-# create a new project in my-app
-npx sv create my-app
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```bash
+git clone <this repo> startpage
+cd startpage
+npm install
 npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
 ```
 
-## Building
+Open <http://localhost:5173>. That is enough to try it out. For daily use you
+probably want it running in the background — see [Installing as a
+service](#installing-as-a-service).
 
-To create a production version of your app:
+## Keybinds
+
+The page listens for plain keypresses, no modifiers:
+
+| Key           | Does                                                   |
+| ------------- | ------------------------------------------------------ |
+| `t`           | Next tab                                               |
+| `T`           | Previous tab                                           |
+| any other key | Opens the link that claims that key in the current tab |
+| `Esc`         | Closes the settings window                             |
+
+Shortcuts are case-sensitive, so `g` and `G` are two different links, which is
+how you fit a lot of links into a small alphabet. A shortcut only has to be
+unique **within its tab** — `c` can be Calendar on one tab and Client on
+another. Give an item an empty shortcut (or `-`) if you want it listed but not
+bound to a key.
+
+Links you click (rather than press a key for) open in a new tab; links you
+reach by shortcut replace the current page, since the start page is usually the
+thing you want to leave.
+
+## Configuring
+
+Click the **Settings** icon in the bottom-left corner of the wallpaper to open
+the editor, or edit `~/.config/startpage/config.json` directly. The file looks
+like this:
+
+```json
+{
+	"title": "My Startpage",
+	"quote": "Act as if what you do makes a difference. It does.",
+	"quickAccess": {
+		"title": "Quick Access",
+		"icon": "🐎",
+		"items": [{ "url": "https://mail.google.com", "shortcut": "m", "name": "📧 Mail" }]
+	},
+	"tabs": [
+		{
+			"title": "Work",
+			"icon": "💼",
+			"sections": [
+				{
+					"title": "Projects",
+					"icon": "🐙",
+					"items": [{ "url": "https://github.com", "shortcut": "p", "name": "🐙 Projects" }]
+				}
+			]
+		}
+	],
+	"backgroundImage": "/api/images/background.jpg",
+	"frameContentImage": "/api/images/frameContent.png"
+}
+```
+
+| Field               | Meaning                                                   |
+| ------------------- | --------------------------------------------------------- |
+| `title`             | Text in the window's title bar                            |
+| `quote`             | The one-liner in the light blue strip                     |
+| `quickAccess`       | A section pinned to the bottom-right box of **every** tab |
+| `tabs`              | The tabs, in display order                                |
+| `tabs[].sections`   | Up to three sections per tab; see the layout below        |
+| `backgroundImage`   | Wallpaper behind the window (optional)                    |
+| `frameContentImage` | Photo in the window's left sidebar (optional)             |
+
+Each item is `{ "name": ..., "url": ..., "shortcut": ... }`. The `name` is
+displayed as-is, so emoji or Nerd Font glyphs at the start of it are just part
+of the name.
+
+### The four boxes
+
+Every tab is a 2×2 grid. The first three boxes are the tab's own sections and
+the fourth is always Quick Access:
+
+```
+┌──────────────┬──────────────┐
+│ sections[0]  │ sections[1]  │
+├──────────────┼──────────────┤
+│ sections[2]  │ quickAccess  │
+└──────────────┴──────────────┘
+```
+
+A section you leave out simply renders as empty space. If a section has more
+items than fit vertically, the list continues in a second column inside the
+same box, and if even that is not enough the list's text shrinks until it fits.
+The whole window scales as one unit, so zooming the browser changes how big it
+looks and never how it is laid out.
+
+### Images
+
+The wallpaper and the sidebar photo ship with defaults (`static/background.png`
+and `static/window-content.png`). To use your own, open Settings →
+Customization and pick a file: it is copied to
+`~/.config/startpage/images/` and referenced from your config. **Use default**
+removes the override again. If you prefer to do it by hand, set
+`backgroundImage` / `frameContentImage` to any path or URL the browser can
+load.
+
+### Where the config lives
+
+`~/.config/startpage/config.json`, unless you set `STARTPAGE_CONFIG` to another
+path. Uploaded images always live in an `images/` directory next to it.
+
+## Setting it as your home page / new tab page
+
+Run the app somewhere stable first (below), then point your browser at it.
+
+**Firefox** — Settings → Home → _Homepage and new windows_ → Custom URLs →
+`http://localhost:51991`. For the new-tab page Firefox needs an add-on such as
+"New Tab Override", since it does not allow custom new-tab URLs on its own.
+
+**Chrome / Chromium** — Settings → On startup → _Open a specific page_ →
+`http://localhost:51991`, and Settings → Appearance → _Show home button_ →
+custom URL. Replacing the new-tab page also requires an extension.
+
+**A nicer URL** — if you would rather type `startpage.local` than a port
+number, `resources/startpage.local` is an nginx site that proxies it. Copy it
+to `/etc/nginx/sites-enabled/`, add `127.0.0.1 startpage.local` to
+`/etc/hosts`, and reload nginx.
+
+## Installing as a service
+
+The `Makefile` installs the built app into `/opt/startpage` and registers a
+**user** systemd unit, so it starts with your session and needs no root beyond
+writing to the prefix:
 
 ```bash
-npm run build
+make install          # build, copy to /opt/startpage, install the unit
+make enable start     # run it now and on every login
+make status           # check on it
+make update           # rebuild and restart after pulling changes
+make uninstall        # remove all of it
 ```
 
-You can preview the production build with `npm run preview`.
+Defaults are `PREFIX=/opt/startpage`, `PORT=51991` and `HOST=127.0.0.1`; pass
+them on the command line to change them, e.g. `make install PORT=8080`.
+`HOST=127.0.0.1` deliberately keeps the page off your network — it is a page of
+your personal links, and it has an unauthenticated endpoint that writes your
+config, so do not expose it to anything you do not trust.
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+## Development
+
+```bash
+npm run dev      # dev server with hot reload
+npm run build    # production build into build/
+npm run preview  # serve that build
+npm run check    # svelte-check / TypeScript
+npm run lint     # prettier + eslint
+npm run format   # rewrite files with prettier
+```
+
+Point the app at a throwaway config while hacking on it:
+
+```bash
+STARTPAGE_CONFIG=/tmp/startpage.json npm run dev
+```
+
+Useful files:
+
+| Path                                     | What                                       |
+| ---------------------------------------- | ------------------------------------------ |
+| `src/routes/+page.svelte`                | The page itself: layout, keybinds, styling |
+| `src/lib/components/ConfigEditor.svelte` | The settings window                        |
+| `src/lib/types.ts`                       | Config shape and the tab → grid mapping    |
+| `src/lib/server/config.ts`               | Reading/writing the config file            |
+| `src/lib/default-config.json`            | What a fresh install gets                  |
+| `resources/`                             | systemd unit and nginx snippets            |
+
+## Credits
+
+The interface font is [VT323](https://fonts.google.com/specimen/VT323) and the
+list font is [JetBrains Mono Nerd
+Font](https://github.com/ryanoasis/nerd-fonts), both under the SIL Open Font
+License; their license files sit next to them in `static/fonts/`.

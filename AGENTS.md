@@ -4,7 +4,12 @@ This file provides guidelines for agentic coding agents operating in this reposi
 
 ## Project Overview
 
-This is a SvelteKit-based browser startpage with keyboard navigation, tabbed categories (hacking/work/personal), and a retro window UI aesthetic.
+This is a SvelteKit-based browser startpage with keyboard navigation, user-defined
+tabs, and a retro window UI aesthetic. All content comes from a JSON config read at
+request time from `~/.config/startpage/config.json` (override the path with the
+`STARTPAGE_CONFIG` env var); nothing user-specific is committed to the repo. The
+repo is public — keep it that way by never committing personal links, hostnames or
+paths.
 
 ## Build/Lint/Test Commands
 
@@ -124,7 +129,7 @@ Note: The existing codebase uses a mix of Svelte 4 and 5 patterns. New code shou
 import { onMount } from 'svelte';
 
 // Internal imports
-import { tabs, naming, title, quote } from '$lib/config';
+import type { Section, StartpageConfig } from '$lib/types';
 ```
 
 ### Formatting (Prettier)
@@ -153,12 +158,13 @@ npm run format
 
 - Use scoped styles in Svelte components
 - Prefer CSS custom properties for theming
-- Use `rem` units for scalability
-- Use `clamp()` for responsive typography
+- Inside `.scene`, size everything in `em` or `%` — see Layout Invariants below.
+  Viewport units and `rem` break the "window scales as one unit" property.
 
 ```css
-/* Example from +page.svelte */
-font-size: clamp(12px, 1.35vmin, 18px);
+/* Example from +page.svelte: the em is a fraction of the scene's own width */
+--scene-width: min(1000px, 95vw, calc(95vh * 1000 / 610));
+font-size: calc(var(--scene-width) / 62.5);
 ```
 
 ### Error Handling
@@ -190,48 +196,48 @@ onMount(() => {
 ```
 src/
 ├── lib/
-│   ├── config.ts      # Main configuration (tabs, links, shortcuts)
-│   └── index.ts       # Library exports
+│   ├── components/
+│   │   └── ConfigEditor.svelte  # In-page settings window
+│   ├── default-config.json      # Written on first run
+│   ├── server/config.ts         # Read/write the user's config.json
+│   └── types.ts                 # Config shape + tab → 2x2 grid mapping
 ├── routes/
-│   ├── +layout.svelte # Layout component
-│   ├── +layout.js     # Layout load function
-│   ├── +page.svelte   # Main startpage component
-│   └── +page.js       # Page load function
-├── app.html           # HTML template
-└── app.d.ts           # TypeScript declarations
+│   ├── +layout.svelte           # Layout component
+│   ├── +layout.js               # Layout load function
+│   ├── +page.svelte             # The startpage: layout, keybinds, styling
+│   ├── +page.server.ts          # Loads and resolves the config
+│   └── api/
+│       ├── config/+server.ts    # GET/PUT the config
+│       └── images/              # Upload and serve user images
+├── app.html                     # HTML template
+└── app.d.ts                     # TypeScript declarations
 static/
-├── background.png     # Main background
-├── window-frame.png  # Window frame overlay
-├── window-content.png # Content area background
-└── fonts/            # Font files (Montserrat, Roboto)
+├── background.png     # Default wallpaper
+├── window-content.png # Default sidebar photo
+└── fonts/             # VT323 and JetBrains Mono Nerd Font (only the faces used)
 ```
 
 ## Configuration
 
 ### Adding New Links
 
-Edit `src/lib/config.ts` to add new shortcuts or modify tabs:
+Links are user data, not code. They live in the user's `config.json` and are edited
+through the settings window or by hand. `src/lib/default-config.json` is the sample
+written on first run — keep it generic (no personal links).
 
-```typescript
-// Add to existing category or create new one
-const newSection = {
-	title: 'New Section',
-	icon: '🚀',
-	items: [
-		{
-			url: 'https://example.com',
-			shortcut: 'x', // Single character
-			name: 'Example Link'
-		}
-	]
-};
+```json
+{
+	"title": "New Section",
+	"icon": "🚀",
+	"items": [{ "url": "https://example.com", "shortcut": "x", "name": "Example Link" }]
+}
 ```
 
 ### Keyboard Shortcuts
 
 - `t` / `T`: Cycle through tabs (forward/backward)
-- `0-9`, letters: Navigate to assigned URLs
-- Custom shortcuts are defined in `config.ts` items
+- Any other key: navigate to the URL that claims it in the current tab
+- Shortcuts are case-sensitive and only need to be unique within a tab
 
 ## Linting Configuration
 
@@ -252,14 +258,28 @@ npm run lint
 
 ### Adding a New Tab
 
-1. Add tab data in `src/lib/config.ts`
-2. Register the tab in the `tabs` array
-3. Add tab naming in the `naming` object
+Use the settings window, or add an entry to `tabs` in the user's `config.json`.
+Each tab holds up to three sections; Quick Access always fills the fourth box.
 
 ### Modifying the Background
 
-1. Replace `static/background.png`
-2. Consider aspect ratio (currently optimized for 1000x610 window)
+Defaults are `static/background.png` (wallpaper) and `static/window-content.png`
+(sidebar). Users override both from Settings → Customization, which stores the
+upload in `~/.config/startpage/images/`. The window is laid out for a 1000x610
+aspect ratio.
+
+### Layout Invariants
+
+Two rules keep the window from overflowing, and both are easy to break:
+
+1. **Everything inside `.scene` is sized in `em` or `%`.** The scene's font size is
+   a fixed fraction of its own width, so the window scales as a single unit and
+   browser zoom never reflows it. Introducing `rem`, `vw`, `vmin` or raw `px` sizes
+   inside the scene reintroduces the zoom-dependent overflow bug.
+2. **Section lists are wrapping flex columns** (`flex-flow: column wrap`), so a long
+   list continues in a new column inside the same box. `fitLists()` in
+   `+page.svelte` then shrinks a list that still does not fit; it runs after render,
+   on resize, and once the webfonts have loaded.
 
 ### Changing the Theme/Colors
 
