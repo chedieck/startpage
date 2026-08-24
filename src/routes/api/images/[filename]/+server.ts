@@ -1,12 +1,8 @@
 import { error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { homedir } from 'node:os';
-import { join } from 'node:path';
-import { readFileSync, existsSync } from 'node:fs';
-
-function getImagesDir(): string {
-	return join(homedir(), '.config', 'startpage', 'images');
-}
+import { basename, join } from 'node:path';
+import { readFileSync, statSync } from 'node:fs';
+import { getImagesDir } from '$lib/server/config';
 
 const MIME_MAP: Record<string, string> = {
 	png: 'image/png',
@@ -22,10 +18,10 @@ export const GET: RequestHandler = async ({ params }) => {
 		return error(400, 'Missing filename');
 	}
 
-	const safe = filename.replace(/[^a-zA-Z0-9._-]/g, '');
+	const safe = basename(filename).replace(/[^a-zA-Z0-9._-]/g, '');
 	const filePath = join(getImagesDir(), safe);
 
-	if (!existsSync(filePath)) {
+	if (!safe || safe.startsWith('.') || !statSync(filePath, { throwIfNoEntry: false })?.isFile()) {
 		return error(404, 'Image not found');
 	}
 

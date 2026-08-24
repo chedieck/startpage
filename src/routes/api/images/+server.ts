@@ -1,12 +1,8 @@
 import { json, error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { writeFile, mkdir, readdir, unlink } from 'node:fs/promises';
-import { homedir } from 'node:os';
 import { join } from 'node:path';
-
-function getImagesDir(): string {
-	return join(homedir(), '.config', 'startpage', 'images');
-}
+import { getImagesDir } from '$lib/server/config';
 
 const ALLOWED_TYPES = ['image/png', 'image/jpeg', 'image/webp', 'image/gif'];
 const MAX_SIZE_10MB = 10 * 1024 * 1024;
@@ -32,7 +28,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		return error(400, 'Invalid slot. Use "background" or "frameContent".');
 	}
 
-	const ext = file.name.split('.').pop() || 'png';
+	const ext = (file.name.split('.').pop() || 'png').toLowerCase().replace(/[^a-z0-9]/g, '');
 	const filename = `${slot}.${ext}`;
 	const imagesDir = getImagesDir();
 	await mkdir(imagesDir, { recursive: true });
@@ -44,7 +40,9 @@ export const POST: RequestHandler = async ({ request }) => {
 				await unlink(join(imagesDir, f));
 			}
 		}
-	} catch {}
+	} catch {
+		// No images directory yet, or nothing to replace.
+	}
 
 	const buffer = Buffer.from(await file.arrayBuffer());
 	await writeFile(join(imagesDir, filename), buffer);

@@ -5,8 +5,14 @@ import { join, dirname } from 'node:path';
 import type { StartpageConfig } from '$lib/types';
 import defaultConfig from '$lib/default-config.json';
 
-function getConfigPath(): string {
+/** Where config.json lives. Override with the STARTPAGE_CONFIG env var. */
+export function getConfigPath(): string {
 	return process.env.STARTPAGE_CONFIG || join(homedir(), '.config', 'startpage', 'config.json');
+}
+
+/** Uploaded images live next to config.json, in an `images/` subdirectory. */
+export function getImagesDir(): string {
+	return join(dirname(getConfigPath()), 'images');
 }
 
 export async function readConfig(): Promise<StartpageConfig> {
