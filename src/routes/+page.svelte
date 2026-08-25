@@ -134,87 +134,75 @@
 	class:bg-loaded={bgLoaded}
 	style:background-image="url('{backgroundImage}')"
 >
+	<!-- The window chrome is the layout: every piece of content lives inside the
+	     frame element it belongs to, so nothing can drift out of alignment. -->
 	<div class="scene">
-		<div class="css-frame">
-			<div class="frame-outer">
-				<div class="frame-inner">
-					<div class="frame-title-bar"></div>
-					<div class="frame-body">
-						<div class="frame-sidebar"></div>
-						<div class="frame-right">
-							<div class="frame-tab-strip"></div>
-							<div class="frame-content"></div>
+		<div class="frame-outer">
+			<div class="frame-inner">
+				<div class="frame-title-bar">
+					<span class="title">{data.resolved.title}</span>
+					<span class="time">{time}</span>
+				</div>
+				<div class="frame-body">
+					<div class="frame-sidebar" style:background-image="url('{frameContentImage}')">
+						<div
+							class="desktop-icon"
+							onclick={() => (editorOpen = true)}
+							onkeydown={(e) => activateOnKey(e, () => (editorOpen = true))}
+							role="button"
+							tabindex="0"
+							title="Click to edit configuration"
+						>
+							<div class="desktop-icon-img">⚙️</div>
+							<div class="desktop-icon-label">Settings</div>
+						</div>
+					</div>
+					<div class="frame-right">
+						<div class="frame-tab-strip">
+							<span class="quote-text">{data.resolved.quote}</span>
+						</div>
+						<div class="frame-content">
+							<div class="tab-bar">
+								{#each tabs as tab, i (tab.title)}
+									<div
+										class="tab-title"
+										class:active={i === currentTabIndex}
+										onclick={() => (currentTabIndex = i)}
+										onkeydown={(e) => activateOnKey(e, () => (currentTabIndex = i))}
+										role="tab"
+										tabindex="0"
+										aria-selected={i === currentTabIndex}
+									>
+										<h1>{tab.title}</h1>
+									</div>
+								{/each}
+							</div>
+							<div class="main" bind:this={mainEl}>
+								{#each currentRows as row, ri (ri)}
+									<div class="lists-container">
+										{#each row as section, si (si)}
+											<div class="column">
+												{#if section.title || section.items.length}
+													<h2>{section.icon} {section.title}</h2>
+													<ul>
+														{#each section.items as item (item.shortcut)}
+															<li class="item">
+																<a href={item.url} target="_blank" rel="noopener noreferrer"
+																	>({item.shortcut}) {item.name}</a
+																>
+															</li>
+														{/each}
+													</ul>
+												{/if}
+											</div>
+										{/each}
+									</div>
+								{/each}
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-		</div>
-		<div class="window-content" style:background-image="url('{frameContentImage}')"></div>
-		<div class="top-container">
-			<div class="title">
-				<span>{data.resolved.title}</span>
-			</div>
-			<div class="time">
-				<span>{time}</span>
-			</div>
-		</div>
-		<div class="quote-container">
-			<div class="quote-text">
-				<span>{data.resolved.quote}</span>
-			</div>
-		</div>
-		<div class="tab-bar-container">
-			<div class="tab-bar">
-				{#each tabs as tab, i (tab.title)}
-					<div
-						class="tab-title"
-						class:active={i === currentTabIndex}
-						onclick={() => (currentTabIndex = i)}
-						onkeydown={(e) => activateOnKey(e, () => (currentTabIndex = i))}
-						role="tab"
-						tabindex="0"
-						aria-selected={i === currentTabIndex}
-					>
-						<h1>{tab.title}</h1>
-					</div>
-				{/each}
-			</div>
-		</div>
-		<div class="main-container">
-			<div class="main" bind:this={mainEl}>
-				{#each currentRows as row, ri (ri)}
-					<div class="lists-container">
-						{#each row as section, si (si)}
-							<div class="column">
-								{#if section.title || section.items.length}
-									<h2>{section.icon} {section.title}</h2>
-									<ul>
-										{#each section.items as item (item.shortcut)}
-											<li class="item">
-												<a href={item.url} target="_blank" rel="noopener noreferrer"
-													>({item.shortcut}) {item.name}</a
-												>
-											</li>
-										{/each}
-									</ul>
-								{/if}
-							</div>
-						{/each}
-					</div>
-				{/each}
-			</div>
-		</div>
-
-		<div
-			class="desktop-icon"
-			onclick={() => (editorOpen = true)}
-			onkeydown={(e) => activateOnKey(e, () => (editorOpen = true))}
-			role="button"
-			tabindex="0"
-			title="Click to edit configuration"
-		>
-			<div class="desktop-icon-img">⚙️</div>
-			<div class="desktop-icon-label">Settings</div>
 		</div>
 	</div>
 </div>
@@ -244,7 +232,7 @@
 	}
 
 	.scene {
-		/* Everything inside the scene is sized in em, and the em is a fixed
+		/* Everything inside the scene is sized in em or %, and the em is a fixed
 		   fraction of the scene width. The whole window therefore scales as a
 		   single unit: browser zoom changes how big it looks, never how it is
 		   laid out. */
@@ -255,14 +243,7 @@
 		font-size: calc(var(--scene-width) / 62.5);
 	}
 
-	.css-frame {
-		position: absolute;
-		inset: 0;
-		width: 100%;
-		height: 100%;
-		pointer-events: none;
-		z-index: 1;
-	}
+	/* ---- window chrome ---- */
 
 	.frame-outer {
 		position: absolute;
@@ -272,43 +253,57 @@
 		border-left: 2px solid #fff;
 		border-bottom: 2px solid #000;
 		border-right: 2px solid #000;
+		box-sizing: border-box;
 	}
 
 	.frame-inner {
 		position: absolute;
-		inset: 2px;
+		inset: 0;
 		background: #c0c0c0;
 		border-top: 1px solid #dfdfdf;
 		border-left: 1px solid #dfdfdf;
 		border-bottom: 1px solid #808080;
 		border-right: 1px solid #808080;
-	}
-
-	.frame-title-bar {
-		position: absolute;
-		left: 4px;
-		top: 4px;
-		width: calc(100% - 8px);
-		height: 6.5%;
-		background: #004e69;
-	}
-
-	.frame-body {
-		position: absolute;
-		left: 0;
-		top: 8.5%;
-		width: 100%;
-		height: 91.5%;
-		display: flex;
-		padding: 0 4px 4px 4px;
 		box-sizing: border-box;
+		padding: 4px;
+		display: flex;
+		flex-direction: column;
 		gap: 4px;
 	}
 
+	.frame-title-bar,
+	.frame-sidebar,
+	.frame-tab-strip,
+	.frame-content {
+		box-sizing: border-box;
+		min-width: 0;
+		min-height: 0;
+	}
+
+	.frame-title-bar {
+		flex: 0 0 6.7%;
+		background: #004e69;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1em;
+		padding: 0 0.9em;
+	}
+
+	.frame-body {
+		flex: 1;
+		display: flex;
+		gap: 4px;
+		min-height: 0;
+	}
+
 	.frame-sidebar {
-		width: 32%;
-		height: 100%;
-		background: #ffffff;
+		flex: 0 0 32%;
+		position: relative;
+		background-color: #ffffff;
+		background-size: cover;
+		background-position: center;
+		background-repeat: no-repeat;
 		border-top: 1px solid #808080;
 		border-left: 1px solid #808080;
 		border-bottom: 1px solid #dfdfdf;
@@ -317,20 +312,22 @@
 
 	.frame-right {
 		flex: 1;
-		height: 100%;
 		display: flex;
 		flex-direction: column;
 		gap: 4px;
+		min-width: 0;
 	}
 
 	.frame-tab-strip {
-		width: 100%;
-		height: 6%;
+		flex: 0 0 6.2%;
 		background: #a6d8ff;
 		border-top: 1px solid #808080;
 		border-left: 1px solid #808080;
 		border-bottom: 1px solid #dfdfdf;
 		border-right: 1px solid #dfdfdf;
+		display: flex;
+		align-items: center;
+		padding: 0 0.8em;
 	}
 
 	.frame-content {
@@ -340,41 +337,15 @@
 		border-left: 1px solid #808080;
 		border-bottom: 1px solid #dfdfdf;
 		border-right: 1px solid #dfdfdf;
-	}
-
-	.window-content,
-	.top-container,
-	.quote-container,
-	.tab-bar-container,
-	.main-container {
-		position: absolute;
-		z-index: 2;
-		box-sizing: border-box;
-	}
-
-	.window-content {
-		left: 1%;
-		top: 9.3%;
-		width: 31.3%;
-		height: 89%;
-		background-size: cover;
-		background-position: center;
-		background-repeat: no-repeat;
-	}
-
-	.top-container {
-		left: 0;
-		top: 0;
-		width: 100%;
-		height: 8.5%;
-		padding: 1.2% 2%;
 		display: flex;
-		justify-content: space-between;
-		align-items: center;
+		flex-direction: column;
+		padding: 0.5em 1.6em 1.2em 1.6em;
 	}
 
-	.top-container .title,
-	.top-container .time {
+	/* ---- title bar ---- */
+
+	.title,
+	.time {
 		font-weight: bold;
 		font-size: 1.3em;
 		white-space: nowrap;
@@ -382,60 +353,49 @@
 		text-overflow: ellipsis;
 	}
 
-	.top-container .time {
+	.time {
 		flex: none;
-		padding-left: 1em;
 	}
 
-	.quote-container {
-		left: 34.2%;
-		top: 8.4%;
-		width: 64.5%;
-		height: 5.5%;
-		display: flex;
-		align-items: center;
-		padding-left: 1%;
-	}
+	/* ---- quote strip ---- */
 
 	.quote-text {
 		color: #222;
 		font-style: italic;
 		font-size: 1.4em;
+		line-height: 1;
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
 	}
 
-	.tab-bar-container {
-		left: 34.8%;
-		top: 15.5%;
-		width: 62.5%;
-		height: 9%;
-		display: flex;
-		align-items: center;
-		padding: 0 1%;
-		overflow: hidden;
-	}
+	/* ---- tab bar ---- */
 
 	.tab-bar {
-		width: 100%;
+		flex: 0 0 auto;
 		display: flex;
-		gap: 1em;
-		padding-top: 0.5em;
 		justify-content: space-around;
-		flex-wrap: nowrap;
+		align-items: center;
+		gap: 1em;
+		padding: 0.7em 0 1em 0;
 		overflow: hidden;
 	}
 
 	.tab-title {
 		min-width: 0;
+		cursor: pointer;
 	}
 
 	.tab-title h1 {
 		margin: 0;
+		text-align: center;
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
+		color: blue;
+		text-shadow:
+			-1px 0 0 yellow,
+			0 -1px 0 yellow;
 	}
 
 	.tab-title.active h1 {
@@ -446,30 +406,11 @@
 			0 -1px 0 blue;
 	}
 
-	.tab-title h1 {
-		text-align: center;
-		color: blue;
-		text-shadow:
-			-1px 0 0 yellow,
-			0 -1px 0 yellow;
-	}
-
-	.tab-title {
-		cursor: pointer;
-	}
-
-	.main-container {
-		left: 34.8%;
-		top: 24.5%;
-		width: 62.5%;
-		height: 72%;
-		padding: 1%;
-		display: flex;
-	}
+	/* ---- the 2x2 grid of link lists ---- */
 
 	.main {
-		width: 100%;
-		height: 100%;
+		flex: 1;
+		min-height: 0;
 		display: flex;
 		flex-direction: column;
 		gap: 1em;
@@ -540,11 +481,12 @@
 		font-size: 1.1em;
 	}
 
+	/* ---- settings icon, sitting on the sidebar image ---- */
+
 	.desktop-icon {
 		position: absolute;
-		left: 3%;
-		bottom: 4%;
-		z-index: 10;
+		left: 5%;
+		bottom: 2%;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
