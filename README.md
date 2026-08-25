@@ -152,13 +152,10 @@ Run the app somewhere stable first (below), then point your browser at it.
 `http://localhost:51991`, and Settings → Appearance → _Show home button_ →
 custom URL. Replacing the new-tab page also requires an extension.
 
-**A nicer URL** — if you would rather type `startpage.local` than a port
-number, `resources/startpage.local` is an nginx site that proxies it. Copy it
-to `/etc/nginx/sites-enabled/`, add `127.0.0.1 startpage.local` to
-`/etc/hosts`, and reload nginx. That assumes your `nginx.conf` pulls the
-directory in with `include /etc/nginx/sites-enabled/*;` — nginx's own default
-config does not, so add the line if yours is missing it.
-`resources/nginx.conf` is a working example.
+**A nicer URL** — `make nginx` puts it on <http://startpage.local> so you never
+type a port number again. It needs nginx installed and asks for sudo; `make
+nginx-uninstall` undoes it. Pick a different name with
+`make nginx DOMAIN=home.local`.
 
 ## Installing as a service
 
@@ -171,6 +168,7 @@ make install          # build, copy to /opt/startpage, install the unit
 make enable start     # run it now and on every login
 make status           # check on it
 make update           # rebuild and restart after pulling changes
+make nginx            # optional: serve it at http://startpage.local
 make uninstall        # remove all of it
 ```
 

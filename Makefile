@@ -1,10 +1,13 @@
-.PHONY: build install uninstall enable disable start stop restart status update clean dev
+.PHONY: build install uninstall enable disable start stop restart status update clean dev nginx nginx-uninstall
 
 PREFIX ?= /opt/startpage
 SERVICE_DIR ?= $(HOME)/.config/systemd/user
 SERVICE_NAME = startpage.service
 PORT ?= 51991
 HOST ?= 127.0.0.1
+DOMAIN ?= startpage.local
+NGINX_CONF ?= /etc/nginx/nginx.conf
+NGINX_SITES ?= /etc/nginx/sites-enabled
 
 build:
 	npm run build
@@ -52,6 +55,27 @@ restart:
 
 status:
 	systemctl --user status $(SERVICE_NAME)
+
+# Serve the page at http://$(DOMAIN) instead of a port number. Idempotent:
+# safe to run again, and it validates the config before reloading nginx.
+nginx:
+	sudo mkdir -p $(NGINX_SITES)
+	sed -e 's|proxy_pass http://localhost:.*;|proxy_pass http://localhost:$(PORT);|' \
+	    -e 's|server_name .*;|server_name $(DOMAIN);|' \
+	    resources/startpage.local | sudo tee $(NGINX_SITES)/$(DOMAIN) > /dev/null
+	@grep -q '$(NGINX_SITES)' $(NGINX_CONF) || { \
+	    echo "Adding the sites-enabled include to $(NGINX_CONF) (backup: $(NGINX_CONF).bak)"; \
+	    sudo cp $(NGINX_CONF) $(NGINX_CONF).bak; \
+	    sudo sed -i '0,/^http {/s||http {\n    include $(NGINX_SITES)/*;|' $(NGINX_CONF); }
+	@grep -q '[[:space:]]$(DOMAIN)$$' /etc/hosts || echo "127.0.0.1 $(DOMAIN)" | sudo tee -a /etc/hosts > /dev/null
+	sudo nginx -t
+	sudo systemctl reload nginx 2>/dev/null || sudo nginx -s reload
+	@echo "Ready at http://$(DOMAIN)"
+
+nginx-uninstall:
+	sudo rm -f $(NGINX_SITES)/$(DOMAIN)
+	@tmp=$$(mktemp); grep -v '[[:space:]]$(DOMAIN)$$' /etc/hosts > $$tmp; sudo cp $$tmp /etc/hosts; rm -f $$tmp
+	sudo nginx -t && { sudo systemctl reload nginx 2>/dev/null || sudo nginx -s reload; }
 
 update: build
 	@echo "Updating $(PREFIX)..."
