@@ -25,3 +25,6 @@ vite.config.ts.timestamp-*
 # claude-docker local state (may contain credentials)
 .claude-docker/
 .claude-docker-EMERGENCY-BACKUP-*.tar.gz
+
+# opencode local agent config
+.opencode/
