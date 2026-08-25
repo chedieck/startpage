@@ -21,6 +21,7 @@
 	});
 
 	let activeTab = $state(0);
+	let uploadError = $state('');
 	let windowX = $state(0);
 	let windowY = $state(0);
 	let isDragging = $state(false);
@@ -147,22 +148,25 @@
 	}
 
 	async function uploadImage(file: File, slot: 'background' | 'frameContent') {
-		const formData = new FormData();
-		formData.append('file', file);
-		formData.append('slot', slot);
-
-		const response = await fetch('/api/images', {
+		const ext = file.name.split('.').pop() ?? '';
+		// Sent as a raw body, not a form: see the note in src/routes/api/images.
+		const response = await fetch(`/api/images?slot=${slot}&ext=${encodeURIComponent(ext)}`, {
 			method: 'POST',
-			body: formData
+			headers: { 'Content-Type': 'application/octet-stream' },
+			body: file
 		});
 
-		if (response.ok) {
-			const result = await response.json();
-			if (slot === 'background') {
-				localConfig.backgroundImage = result.path;
-			} else {
-				localConfig.frameContentImage = result.path;
-			}
+		if (!response.ok) {
+			uploadError = `Upload failed (${response.status}). Check the server log.`;
+			return;
+		}
+
+		uploadError = '';
+		const result = await response.json();
+		if (slot === 'background') {
+			localConfig.backgroundImage = result.path;
+		} else {
+			localConfig.frameContentImage = result.path;
 		}
 	}
 
@@ -443,7 +447,7 @@
 		</div>
 
 		<div class="status-bar">
-			<div class="status-text">Ready</div>
+			<div class="status-text" class:error={uploadError}>{uploadError || 'Ready'}</div>
 		</div>
 
 		<div class="button-bar">
@@ -757,6 +761,10 @@
 
 	.status-text {
 		color: #c0c0c0;
+	}
+
+	.status-text.error {
+		color: #ff8888;
 	}
 
 	.button-bar {
