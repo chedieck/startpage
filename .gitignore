@@ -28,3 +28,6 @@ vite.config.ts.timestamp-*
 
 # opencode local agent config
 .opencode/
+
+# yarn state (this project uses npm)
+.yarn/
