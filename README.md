@@ -1,5 +1,8 @@
 # Startpage
 
+[![CI](https://github.com/chedieck/startpage/actions/workflows/ci.yml/badge.svg)](https://github.com/chedieck/startpage/actions/workflows/ci.yml)
+[![License: AGPL v3](https://img.shields.io/badge/license-AGPL--3.0--or--later-blue.svg)](LICENSE)
+
 A keyboard-driven browser start page that looks like a desktop from a computer
 lab in 1997. Every link has a single-key shortcut, links are grouped into four
 boxes, and boxes are grouped into tabs. Everything you see — the title, the
@@ -32,17 +35,18 @@ service](#installing-as-a-service).
 
 ## Keybinds
 
-The page listens for plain keypresses, no modifiers:
+The page listens for bare keypresses — no `Ctrl`, no `Alt`:
 
 | Key           | Does                                                   |
 | ------------- | ------------------------------------------------------ |
-| `t`           | Next tab                                               |
-| `T`           | Previous tab                                           |
+| `Tab`         | Next tab                                               |
+| `Shift`+`Tab` | Previous tab                                           |
 | any other key | Opens the link that claims that key in the current tab |
 | `Esc`         | Closes the settings window                             |
 
-Shortcuts are case-sensitive, so `g` and `G` are two different links, which is
-how you fit a lot of links into a small alphabet. A shortcut only has to be
+Cycling tabs sits on `Tab` precisely so that every printable key stays yours to
+assign. Shortcuts are case-sensitive, so `g` and `G` are two different links,
+which is how you fit a lot of links into a small alphabet. A shortcut only has to be
 unique **within its tab** — `c` can be Calendar on one tab and Client on
 another. Give an item an empty shortcut (or `-`) if you want it listed but not
 bound to a key.
@@ -151,7 +155,9 @@ custom URL. Replacing the new-tab page also requires an extension.
 **A nicer URL** — if you would rather type `startpage.local` than a port
 number, `resources/startpage.local` is an nginx site that proxies it. Copy it
 to `/etc/nginx/sites-enabled/`, add `127.0.0.1 startpage.local` to
-`/etc/hosts`, and reload nginx.
+`/etc/hosts`, and reload nginx. Distributions that ship a bare `nginx.conf`
+(Arch, for one) have no `sites-enabled` directory to copy into;
+`resources/nginx.conf` is a minimal one that includes it, for reference.
 
 ## Installing as a service
 
@@ -210,5 +216,6 @@ License; their license files sit next to them in `static/fonts/`.
 
 ## License
 
-[AGPL-3.0-or-later](LICENSE). If you run a modified version of this as a
+Copyright (C) 2026 chedieck. Licensed under
+[AGPL-3.0-or-later](LICENSE): if you run a modified version of this as a
 service that other people can reach, they are entitled to its source.
