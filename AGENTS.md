@@ -235,9 +235,10 @@ written on first run — keep it generic (no personal links).
 
 ### Keyboard Shortcuts
 
-- `t` / `T`: Cycle through tabs (forward/backward)
+- `Tab` / `Shift`+`Tab`: cycle through tabs (forward/backward)
 - Any other key: navigate to the URL that claims it in the current tab
-- Shortcuts are case-sensitive and only need to be unique within a tab
+- Shortcuts are case-sensitive and only need to be unique within a tab. Keep tab
+  cycling off the printable keys so users can bind all of them.
 
 ## Linting Configuration
 

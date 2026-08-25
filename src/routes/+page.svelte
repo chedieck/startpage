@@ -86,12 +86,11 @@
 
 		const key = e.key;
 
-		if (key === 't') {
-			currentTabIndex = (currentTabIndex + 1) % tabs.length;
-			return;
-		}
-		if (key === 'T') {
-			currentTabIndex = (currentTabIndex - 1 + tabs.length) % tabs.length;
+		// Tab cycles tabs, so every printable key is free to be a link shortcut.
+		if (key === 'Tab') {
+			e.preventDefault();
+			const step = e.shiftKey ? -1 : 1;
+			currentTabIndex = (currentTabIndex + step + tabs.length) % tabs.length;
 			return;
 		}
 
