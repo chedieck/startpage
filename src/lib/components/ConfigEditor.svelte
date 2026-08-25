@@ -39,6 +39,37 @@
 		return JSON.parse(JSON.stringify(obj));
 	}
 
+	function isBound(shortcut: string): boolean {
+		return Boolean(shortcut) && shortcut !== '-';
+	}
+
+	/**
+	 * Keys claimed by more than one link in the same tab. Quick Access is on
+	 * every tab, so its keys are compared against every tab's sections. Only the
+	 * first link with a key works, so the rest need flagging.
+	 */
+	const conflicts = $derived.by(() => {
+		const clashing: string[] = [];
+		for (const tab of localConfig.tabs) {
+			const seen: string[] = [];
+			const items = [...tab.sections.flatMap((s) => s.items), ...localConfig.quickAccess.items];
+			for (const item of items) {
+				if (!isBound(item.shortcut)) continue;
+				if (seen.includes(item.shortcut) && !clashing.includes(item.shortcut)) {
+					clashing.push(item.shortcut);
+				}
+				seen.push(item.shortcut);
+			}
+		}
+		return clashing;
+	});
+
+	const conflictMessage = $derived(
+		conflicts.length
+			? `Duplicate shortcut${conflicts.length > 1 ? 's' : ''}: ${conflicts.join(', ')} — only the first link with each key opens.`
+			: ''
+	);
+
 	onMount(() => {
 		localConfig = { openInNewTab: false, ...deepClone(config) };
 		windowX = (window.innerWidth - 700) / 2;
@@ -223,7 +254,7 @@
 
 		<div class="window-body">
 			<div class="tab-strip">
-				{#each tabLabels as label, i (label)}
+				{#each tabLabels as label, i (i)}
 					<button class="tab" class:active={activeTab === i} onclick={() => (activeTab = i)}>
 						{label}
 					</button>
@@ -338,6 +369,10 @@
 										type="text"
 										bind:value={item.shortcut}
 										class="xp-input shortcut-input"
+										class:conflict={conflicts.includes(item.shortcut)}
+										title={conflicts.includes(item.shortcut)
+											? 'Another link already uses this key'
+											: 'Leave blank for no shortcut'}
 										placeholder="Key"
 										maxlength="2"
 									/>
@@ -426,6 +461,10 @@
 														type="text"
 														bind:value={item.shortcut}
 														class="xp-input shortcut-input"
+														class:conflict={conflicts.includes(item.shortcut)}
+														title={conflicts.includes(item.shortcut)
+															? 'Another link already uses this key'
+															: 'Leave blank for no shortcut'}
 														placeholder="Key"
 														maxlength="2"
 													/>
@@ -447,7 +486,13 @@
 		</div>
 
 		<div class="status-bar">
-			<div class="status-text" class:error={uploadError}>{uploadError || 'Ready'}</div>
+			<div
+				class="status-text"
+				class:error={uploadError}
+				class:warn={!uploadError && conflictMessage}
+			>
+				{uploadError || conflictMessage || 'Ready'}
+			</div>
 		</div>
 
 		<div class="button-bar">
@@ -765,6 +810,16 @@
 
 	.status-text.error {
 		color: #ff8888;
+	}
+
+	.status-text.warn {
+		color: #e8c170;
+	}
+
+	.xp-input.conflict {
+		border-color: #e8c170;
+		background: #3a2f1a;
+		color: #e8c170;
 	}
 
 	.button-bar {

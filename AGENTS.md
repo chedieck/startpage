@@ -239,6 +239,8 @@ written on first run — keep it generic (no personal links).
 - Any other key: navigate to the URL that claims it in the current tab
 - Shortcuts are case-sensitive and only need to be unique within a tab. Keep tab
   cycling off the printable keys so users can bind all of them.
+- Duplicates are not an error: the first link with a key wins, the others render
+  without one, and the settings window flags the clash.
 
 ## Linting Configuration
 
@@ -268,6 +270,15 @@ Defaults are `static/background.png` (wallpaper) and `static/window-content.png`
 (sidebar). Users override both from Settings → Customization, which stores the
 upload in `~/.config/startpage/images/`. The window is laid out for a 1000x610
 aspect ratio.
+
+### Never Key an `{#each}` on User Data
+
+`{#each items as item (item.shortcut)}` looks harmless and is a landmine: Svelte
+throws on duplicate keys, and the resulting error takes down the whole page --
+including the settings window, which is the only way a non-technical user could
+fix their config. Two links sharing a shortcut, two links with no shortcut, or
+two tabs with the same title all used to do exactly that. Key on the index, or
+do not key at all, unless the field is genuinely guaranteed unique.
 
 ### Layout Invariants
 

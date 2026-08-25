@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import type { Section, StartpageConfig } from '$lib/types';
+	import type { Section, ShortcutItem, StartpageConfig } from '$lib/types';
 	import { SvelteMap } from 'svelte/reactivity';
 	import ConfigEditor from '$lib/components/ConfigEditor.svelte';
 
@@ -50,12 +50,27 @@
 		return `${now.toLocaleDateString()} @${now.toLocaleTimeString()}`;
 	}
 
+	/** A shortcut is bound unless it is blank or an explicit '-'. */
+	function isBound(shortcut: string): boolean {
+		return Boolean(shortcut) && shortcut !== '-';
+	}
+
+	/**
+	 * Whether this item is the one a key actually opens. Two links can claim the
+	 * same key -- the first wins -- and only that one should advertise it, so the
+	 * page never shows a shortcut that does nothing.
+	 */
+	function ownsShortcut(item: ShortcutItem): boolean {
+		return isBound(item.shortcut) && shortcutMap.get(item.shortcut) === item.url;
+	}
+
 	function buildShortcutMap(rows: Section[][]): SvelteMap<string, string> {
 		const map = new SvelteMap<string, string>();
 		for (const row of rows) {
 			for (const section of row) {
 				for (const item of section.items) {
-					if (item.shortcut && item.shortcut !== '-') {
+					// First one wins: a duplicate added later cannot steal the key.
+					if (isBound(item.shortcut) && !map.has(item.shortcut)) {
 						map.set(item.shortcut, item.url);
 					}
 				}
@@ -172,7 +187,7 @@
 						</div>
 						<div class="frame-content">
 							<div class="tab-bar">
-								{#each tabs as tab, i (tab.title)}
+								{#each tabs as tab, i (i)}
 									<div
 										class="tab-title"
 										class:active={i === currentTabIndex}
@@ -194,12 +209,14 @@
 												{#if section.title || section.items.length}
 													<h2>{section.icon} {section.title}</h2>
 													<ul>
-														{#each section.items as item (item.shortcut)}
+														{#each section.items as item, ii (ii)}
 															<li class="item">
 																<a
 																	href={item.url}
 																	target={openInNewTab ? '_blank' : null}
-																	rel="noopener noreferrer">({item.shortcut}) {item.name}</a
+																	rel="noopener noreferrer"
+																	>{#if ownsShortcut(item)}({item.shortcut}){/if}
+																	{item.name}</a
 																>
 															</li>
 														{/each}

@@ -49,7 +49,12 @@ assign. Shortcuts are case-sensitive, so `g` and `G` are two different links,
 which is how you fit a lot of links into a small alphabet. A shortcut only has to be
 unique **within its tab** — `c` can be Calendar on one tab and Client on
 another. Give an item an empty shortcut (or `-`) if you want it listed but not
-bound to a key.
+bound to a key — it is then shown without the `(key)` prefix.
+
+If two links in the same tab claim the same key, the first one wins; the other
+is drawn without a key so the page never advertises a shortcut that does
+nothing, and the settings window highlights both in amber and says so in its
+status bar.
 
 Links open in the same tab, replacing the start page — which is usually what
 you want, since the start page is the thing you are leaving. Tick **Open links
