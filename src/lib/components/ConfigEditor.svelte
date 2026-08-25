@@ -16,7 +16,8 @@
 		quickAccess: { title: '', icon: '', items: [] },
 		tabs: [],
 		backgroundImage: undefined,
-		frameContentImage: undefined
+		frameContentImage: undefined,
+		openInNewTab: false
 	});
 
 	let activeTab = $state(0);
@@ -38,7 +39,7 @@
 	}
 
 	onMount(() => {
-		localConfig = deepClone(config);
+		localConfig = { openInNewTab: false, ...deepClone(config) };
 		windowX = (window.innerWidth - 700) / 2;
 		windowY = (window.innerHeight - 550) / 2;
 	});
@@ -285,6 +286,18 @@
 						<div class="field">
 							<label for="quote-input">Quote</label>
 							<input id="quote-input" type="text" bind:value={localConfig.quote} class="xp-input" />
+						</div>
+						<div class="field">
+							<label for="new-tab-input">Links</label>
+							<label class="checkbox-label">
+								<input
+									id="new-tab-input"
+									type="checkbox"
+									bind:checked={localConfig.openInNewTab}
+									class="xp-checkbox"
+								/>
+								Open links in a new tab
+							</label>
 						</div>
 					</div>
 				{:else if activeTab === 2}
@@ -753,6 +766,23 @@
 		padding: 12px 16px;
 		background: #1a3a4a;
 		border-top: 1px solid #2a5a6a;
+	}
+
+	.field label.checkbox-label {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		cursor: pointer;
+		color: #eee;
+		font-weight: normal;
+		width: auto;
+	}
+
+	.xp-checkbox {
+		width: 16px;
+		height: 16px;
+		accent-color: #0a7a9e;
+		cursor: pointer;
 	}
 
 	.image-upload {

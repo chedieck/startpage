@@ -47,9 +47,11 @@ unique **within its tab** — `c` can be Calendar on one tab and Client on
 another. Give an item an empty shortcut (or `-`) if you want it listed but not
 bound to a key.
 
-Links you click (rather than press a key for) open in a new tab; links you
-reach by shortcut replace the current page, since the start page is usually the
-thing you want to leave.
+Links open in the same tab, replacing the start page — which is usually what
+you want, since the start page is the thing you are leaving. Tick **Open links
+in a new tab** in Settings → General (or set `"openInNewTab": true` in the
+config) if you would rather keep it open; the setting applies to clicks and
+keyboard shortcuts alike.
 
 ## Configuring
 
@@ -61,6 +63,7 @@ like this:
 {
 	"title": "My Startpage",
 	"quote": "Act as if what you do makes a difference. It does.",
+	"openInNewTab": false,
 	"quickAccess": {
 		"title": "Quick Access",
 		"icon": "🐎",
@@ -93,6 +96,7 @@ like this:
 | `tabs[].sections`   | Up to three sections per tab; see the layout below        |
 | `backgroundImage`   | Wallpaper behind the window (optional)                    |
 | `frameContentImage` | Photo in the window's left sidebar (optional)             |
+| `openInNewTab`      | Open links in a new tab instead of navigating away        |
 
 Each item is `{ "name": ..., "url": ..., "shortcut": ... }`. The `name` is
 displayed as-is, so emoji or Nerd Font glyphs at the start of it are just part

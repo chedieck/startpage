@@ -27,6 +27,8 @@ export interface StartpageConfig {
 	backgroundImage?: string;
 	/** Path or URL for the left sidebar content image (inside the window frame) */
 	frameContentImage?: string;
+	/** Open links in a new tab instead of navigating away from the startpage */
+	openInNewTab?: boolean;
 }
 
 export interface TabDefinition {
@@ -61,12 +63,14 @@ export function resolveConfig(config: StartpageConfig): {
 	tabs: ResolvedTab[];
 	backgroundImage?: string;
 	frameContentImage?: string;
+	openInNewTab: boolean;
 } {
 	return {
 		title: config.title,
 		quote: config.quote,
 		tabs: config.tabs.map((t) => resolveTab(t, config.quickAccess)),
 		backgroundImage: config.backgroundImage,
-		frameContentImage: config.frameContentImage
+		frameContentImage: config.frameContentImage,
+		openInNewTab: config.openInNewTab ?? false
 	};
 }

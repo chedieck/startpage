@@ -15,6 +15,7 @@
 	let currentRows = $derived(tabs[currentTabIndex]?.data ?? []);
 	let shortcutMap = $derived(buildShortcutMap(currentRows));
 
+	let openInNewTab = $derived(data.resolved.openInNewTab ?? false);
 	let backgroundImage = $derived(data.resolved.backgroundImage ?? '/background.png');
 	let frameContentImage = $derived(data.resolved.frameContentImage ?? '/window-content.png');
 
@@ -71,6 +72,15 @@
 		}
 	}
 
+	/** Follow a link the way the config asks for: in place, or in a new tab. */
+	function openLink(url: string) {
+		if (openInNewTab) {
+			window.open(url, '_blank', 'noopener');
+		} else {
+			window.location.href = url;
+		}
+	}
+
 	function handleKey(e: KeyboardEvent) {
 		if (editorOpen) return;
 
@@ -86,7 +96,7 @@
 		}
 
 		if (shortcutMap.has(key)) {
-			window.location.href = shortcutMap.get(key)!;
+			openLink(shortcutMap.get(key)!);
 		}
 	}
 
@@ -187,8 +197,10 @@
 													<ul>
 														{#each section.items as item (item.shortcut)}
 															<li class="item">
-																<a href={item.url} target="_blank" rel="noopener noreferrer"
-																	>({item.shortcut}) {item.name}</a
+																<a
+																	href={item.url}
+																	target={openInNewTab ? '_blank' : null}
+																	rel="noopener noreferrer">({item.shortcut}) {item.name}</a
 																>
 															</li>
 														{/each}

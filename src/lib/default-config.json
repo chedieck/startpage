@@ -1,6 +1,7 @@
 {
 	"title": "My Startpage",
 	"quote": "Act as if what you do makes a difference. It does.",
+	"openInNewTab": false,
 	"quickAccess": {
 		"title": "Quick Access",
 		"icon": "🐎",
