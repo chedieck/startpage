@@ -23,7 +23,7 @@ telemetry. The first time it starts, it writes a sample config for you.
 ## Quick start
 
 ```bash
-git clone <this repo> startpage
+git clone https://github.com/chedieck/startpage.git
 cd startpage
 npm install
 npm run dev
@@ -155,9 +155,10 @@ custom URL. Replacing the new-tab page also requires an extension.
 **A nicer URL** — if you would rather type `startpage.local` than a port
 number, `resources/startpage.local` is an nginx site that proxies it. Copy it
 to `/etc/nginx/sites-enabled/`, add `127.0.0.1 startpage.local` to
-`/etc/hosts`, and reload nginx. Distributions that ship a bare `nginx.conf`
-(Arch, for one) have no `sites-enabled` directory to copy into;
-`resources/nginx.conf` is a minimal one that includes it, for reference.
+`/etc/hosts`, and reload nginx. That assumes your `nginx.conf` pulls the
+directory in with `include /etc/nginx/sites-enabled/*;` — nginx's own default
+config does not, so add the line if yours is missing it.
+`resources/nginx.conf` is a working example.
 
 ## Installing as a service
 
