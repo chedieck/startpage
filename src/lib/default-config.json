@@ -6,7 +6,7 @@
 		"title": "Quick Access",
 		"icon": "🐎",
 		"items": [
-			{ "url": "https://mail.google.com", "shortcut": "m", "name": "📧 Mail" },
+			{ "url": "https://mail.google.com", "shortcut": "e", "name": "📧 Mail" },
 			{ "url": "https://calendar.google.com", "shortcut": "c", "name": "📅 Calendar" },
 			{ "url": "https://drive.google.com", "shortcut": "d", "name": "💾 Drive" },
 			{ "url": "https://github.com", "shortcut": "g", "name": "🐙 GitHub" }
@@ -21,16 +21,16 @@
 					"title": "Projects",
 					"icon": "🐙",
 					"items": [
-						{ "url": "https://github.com", "shortcut": "p", "name": "🐙 Projects" },
+						{ "url": "https://github.com", "shortcut": "m", "name": "🐙 MyProject" },
 						{ "url": "http://localhost:3000", "shortcut": "l", "name": "🌐 Local Dev" }
 					]
 				},
 				{
-					"title": "Tools",
-					"icon": "⚒️",
+					"title": "Docs",
+					"icon": "📚",
 					"items": [
-						{ "url": "https://notion.so", "shortcut": "n", "name": "📝 Notion" },
-						{ "url": "https://figma.com", "shortcut": "f", "name": "🎨 Figma" }
+						{ "url": "https://svelte.dev/docs", "shortcut": "s", "name": "📘 Svelte" },
+						{ "url": "https://developer.mozilla.org", "shortcut": "w", "name": "🌐 MDN" }
 					]
 				}
 			]

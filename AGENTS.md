@@ -293,6 +293,27 @@ Two rules keep the window from overflowing, and both are easy to break:
    `+page.svelte` then shrinks a list that still does not fit; it runs after render,
    on resize, and once the webfonts have loaded.
 
+### Regenerating the README Screenshot
+
+`docs/screenshot.jpg` is the default config rendered by a headless browser, so
+it has to be retaken whenever `src/lib/default-config.json` or the layout
+changes. Build, serve the build against a throwaway config so the app writes the
+default one, then capture with Playwright:
+
+```js
+const ctx = await browser.newContext({
+	viewport: { width: 1400, height: 860 },
+	deviceScaleFactor: 2,
+	locale: 'en-US',
+	timezoneId: 'America/Sao_Paulo'
+});
+await ctx.clock.setFixedTime(new Date('2026-08-26T09:41:03-03:00'));
+```
+
+The fixed clock keeps the title bar from showing whatever time the machine
+happened to be at. Keep the result around 2800px wide at JPEG quality 90 -- the
+shot is meant to be HD, not downscaled.
+
 ### Changing the Theme/Colors
 
 Edit CSS variables in `src/routes/+page.svelte` `<style>` block.
