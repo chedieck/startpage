@@ -3,12 +3,7 @@
 [![CI](https://github.com/chedieck/startpage/actions/workflows/ci.yml/badge.svg)](https://github.com/chedieck/startpage/actions/workflows/ci.yml)
 [![License: AGPL v3](https://img.shields.io/badge/license-AGPL--3.0--or--later-blue.svg)](LICENSE)
 
-A keyboard-driven browser start page that looks like a desktop from a computer
-lab in 1997. Every link has a single-key shortcut, links are grouped into four
-boxes, and boxes are grouped into tabs. Everything you see — the title, the
-quote, the tabs, the links, the wallpaper and the photo in the sidebar — comes
-from one JSON file, and there is a settings window for editing it if you would
-rather not touch JSON.
+A keyboard-driven browser start page. Every link has a single-key shortcut, links are grouped into four boxes, and boxes are grouped into tabs. Everything you see — the title, the quote, the tabs, the links, the wallpaper and the photo in the sidebar — comes from one JSON file, and there is a settings window for editing it if you would rather not touch JSON.
 
 ![Screenshot of the start page with its default configuration](docs/screenshot.jpg)
 
