@@ -3,7 +3,7 @@
 [![CI](https://github.com/chedieck/startpage/actions/workflows/ci.yml/badge.svg)](https://github.com/chedieck/startpage/actions/workflows/ci.yml)
 [![License: AGPL v3](https://img.shields.io/badge/license-AGPL--3.0--or--later-blue.svg)](LICENSE)
 
-A keyboard-driven browser start page. Every link has a single-key shortcut, links are grouped into four boxes, and boxes are grouped into tabs.
+A shortcut-driven browser start page. Every link has a single-key shortcut, links are grouped into four boxes, and boxes are grouped into tabs.
 
 ![Screenshot of the start page with its default configuration](docs/screenshot.jpg)
 
