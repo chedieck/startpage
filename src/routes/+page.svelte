@@ -513,7 +513,7 @@
 
 	.desktop-icon {
 		position: absolute;
-		left: 5%;
+		right: 5%;
 		bottom: 2%;
 		display: flex;
 		flex-direction: column;
